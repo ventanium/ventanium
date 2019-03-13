@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Ventanium.props" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug-static|Win32">
+      <Configuration>Debug-static</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-static|x64">
+      <Configuration>Debug-static</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-dll|Win32">
+      <Configuration>Debug-dll</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-dll|x64">
+      <Configuration>Debug-dll</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-static|Win32">
+      <Configuration>Release-static</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-static|x64">
+      <Configuration>Release-static</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-dll|Win32">
+      <Configuration>Release-dll</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-dll|x64">
+      <Configuration>Release-dll</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-dll|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-dll|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-dll|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-dll|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-dll|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;VTM_DLL_EXPORT;%(PreprocessorDefinitions);$(VentaniumDefs)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VentaniumLibs)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions);$(VentaniumDefs)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+    <Lib>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-dll|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;VTM_DLL_EXPORT;%(PreprocessorDefinitions);$(VentaniumDefs)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VentaniumLibs)</AdditionalDependencies>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions);$(VentaniumDefs)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+    <Lib>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-dll|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;VTM_DLL_EXPORT;%(PreprocessorDefinitions);$(VentaniumDefs)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VentaniumLibs)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions);$(VentaniumDefs)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-dll|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;VTM_DLL_EXPORT;%(PreprocessorDefinitions);$(VentaniumDefs)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VentaniumLibs)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions);$(VentaniumDefs)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\buffer.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\convert.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\dataset.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\elem.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\error.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\format.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\hash.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\list.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\map.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\math.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\string.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\system.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\variant.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\crypto\crypto.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\crypto\hash.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\fs\config.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\fs\file.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\fs\log.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\fs\mime.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_client.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_connection.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_file.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_file_route.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_format.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_memory.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_parser.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_request.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_response.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_router.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_server.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_static_route.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_upgrade.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_util.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\ws_connection.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\ws_frame.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\ws_message.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\ws_parser.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_dgram_client.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_dgram_server.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_parser.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_protocol.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_client.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_connection.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_server.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket_addr.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket_connection.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket_dgram_server.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket_emitter.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket_stream_server.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket_writer.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\url.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sql\sql.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sql\sql_connection.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sql\sql_result.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sql\sql_statement.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sql\sql_util.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_plain.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_saddr.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_tls_unsupported.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_util.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\fs\file.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\fs\path.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\net\network.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\net\socket_listener_select.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\util\mutex.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\util\process.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\util\thread.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\util\time.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\util\base64.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\util\latch.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\util\serialization.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\util\signal.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\util\spinlock.c" />
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\util\time.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\api.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\buffer.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\convert.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\dataset.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\elem.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\error.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\flag.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\format.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\hash.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\lang.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\list.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\macros.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\map.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\math.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\smap.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\squeue.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\string.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\system.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\types.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\variant.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\version.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\crypto\crypto.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\crypto\hash.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\fs\config.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\fs\file.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\fs\log.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\fs\mime.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\fs\path.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\common.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_client.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_connection_base_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_connection_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_context.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_error.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_file.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_file_route.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_format.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_memory.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_memory_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_parser.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_request.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_request_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_response.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_response_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_route.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_router.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_server.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_static_route.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_upgrade.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_util.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_connection.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_connection_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_error.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_frame_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_message.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_message_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_parser.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\network.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_dgram_client.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_dgram_server.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_parser_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_protocol_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_client.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_connection.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_connection_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_server.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_addr.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_addr_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_connection.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_dgram_server.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_emitter.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_event.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_listener.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_shared.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_spec.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_stream_server.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_writer.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\url.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_connection.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_connection_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_error.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_result.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_result_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_statement.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_util_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_saddr.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_types.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_types_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_util_intl.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\atomic.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\base64.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\json.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\latch.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\mutex.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\process.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\profile.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\serialization.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\signal.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\spinlock.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\thread.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\time.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="$(VentaniumRoot)\windows\ventanium.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

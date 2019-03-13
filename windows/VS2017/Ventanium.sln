@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.329
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ventanium", "Ventanium.vcxproj", "{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ventanium-Test", "Ventanium-Test.vcxproj", "{EFD7B131-A088-4AE1-B43D-835265E01AE2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3} = {D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug-dll|x64 = Debug-dll|x64
+		Debug-dll|x86 = Debug-dll|x86
+		Debug-static|x64 = Debug-static|x64
+		Debug-static|x86 = Debug-static|x86
+		Release-dll|x64 = Release-dll|x64
+		Release-dll|x86 = Release-dll|x86
+		Release-static|x64 = Release-static|x64
+		Release-static|x86 = Release-static|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Debug-dll|x64.ActiveCfg = Debug-dll|x64
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Debug-dll|x64.Build.0 = Debug-dll|x64
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Debug-dll|x86.ActiveCfg = Debug-dll|Win32
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Debug-dll|x86.Build.0 = Debug-dll|Win32
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Debug-static|x64.ActiveCfg = Debug-static|x64
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Debug-static|x64.Build.0 = Debug-static|x64
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Debug-static|x86.ActiveCfg = Debug-static|Win32
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Debug-static|x86.Build.0 = Debug-static|Win32
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Release-dll|x64.ActiveCfg = Release-dll|x64
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Release-dll|x64.Build.0 = Release-dll|x64
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Release-dll|x86.ActiveCfg = Release-dll|Win32
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Release-dll|x86.Build.0 = Release-dll|Win32
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Release-static|x64.ActiveCfg = Release-static|x64
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Release-static|x64.Build.0 = Release-static|x64
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Release-static|x86.ActiveCfg = Release-static|Win32
+		{D97E3B4E-FEB7-4EFB-9BF9-0A46F53834C3}.Release-static|x86.Build.0 = Release-static|Win32
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Debug-dll|x64.ActiveCfg = Debug-dll|x64
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Debug-dll|x64.Build.0 = Debug-dll|x64
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Debug-dll|x86.ActiveCfg = Debug-dll|Win32
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Debug-dll|x86.Build.0 = Debug-dll|Win32
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Debug-static|x64.ActiveCfg = Debug-static|x64
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Debug-static|x64.Build.0 = Debug-static|x64
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Debug-static|x86.ActiveCfg = Debug-static|Win32
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Debug-static|x86.Build.0 = Debug-static|Win32
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Release-dll|x64.ActiveCfg = Release-dll|x64
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Release-dll|x64.Build.0 = Release-dll|x64
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Release-dll|x86.ActiveCfg = Release-dll|Win32
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Release-dll|x86.Build.0 = Release-dll|Win32
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Release-static|x64.ActiveCfg = Release-static|x64
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Release-static|x64.Build.0 = Release-static|x64
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Release-static|x86.ActiveCfg = Release-static|Win32
+		{EFD7B131-A088-4AE1-B43D-835265E01AE2}.Release-static|x86.Build.0 = Release-static|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {87C7710B-CE17-48D2-839D-8BF61568CDD0}
+	EndGlobalSection
+EndGlobal

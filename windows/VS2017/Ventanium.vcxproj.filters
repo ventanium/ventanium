@@ -1,0 +1,572 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\buffer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\convert.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\dataset.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\elem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\error.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\format.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\hash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\list.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\map.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\math.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\string.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\system.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\variant.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\crypto\crypto.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\crypto\hash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\fs\config.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\fs\file.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\fs\log.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\fs\mime.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_client.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_connection.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_file.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_file_route.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_format.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_memory.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_parser.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_request.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_response.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_router.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_server.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_static_route.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_upgrade.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\http_util.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\ws_connection.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\ws_frame.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\ws_message.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\http\ws_parser.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_dgram_client.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_dgram_server.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_parser.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_protocol.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_client.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_connection.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_server.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket_addr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket_connection.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket_dgram_server.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket_emitter.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket_stream_server.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\socket_writer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\net\url.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sql\sql.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sql\sql_connection.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sql\sql_result.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sql\sql_statement.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sql\sql_util.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_plain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_saddr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_tls_unsupported.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_util.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\fs\file.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\fs\path.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\net\network.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\net\socket_listener_select.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\util\mutex.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\util\process.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\util\thread.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\sys\windows\util\time.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\util\base64.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\util\latch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\util\serialization.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\util\signal.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\util\spinlock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\util\time.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\convert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\dataset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\elem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\flag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\format.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\lang.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\macros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\smap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\squeue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\variant.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\crypto\crypto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\crypto\hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\fs\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\fs\file.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\fs\log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\fs\mime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\fs\path.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_connection_base_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_connection_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_context.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_file.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_file_route.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_format.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_memory_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_request.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_request_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_response.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_response_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_route.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_router.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_static_route.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_upgrade.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\http_util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_connection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_connection_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_frame_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_message.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_message_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\http\ws_parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\network.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_dgram_client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_dgram_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_parser_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_protocol_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_connection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_connection_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\nm\nm_stream_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_addr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_addr_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_connection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_dgram_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_emitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_listener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_shared.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_spec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_stream_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\socket_writer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\net\url.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_connection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_connection_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_result.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_result_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_statement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sql\sql_util_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_saddr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_types_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\sys\base\net\socket_util_intl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\atomic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\base64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\json.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\latch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\mutex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\process.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\profile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\serialization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\signal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\spinlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\thread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\util\time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="$(VentaniumRoot)\windows\ventanium.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(VentaniumRoot)test\vtf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(VentaniumRoot)test\test.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_dataset.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_elem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_format.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_list.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_map.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_string.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_variant.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\crypto\test_hash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\fs\test_config.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\fs\test_file.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\fs\test_log.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_http_server.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_nm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_nm_dgram.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_nm_stream.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_nm_stream_mt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_url.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\sql\test_sql.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\util\test_base64.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\util\test_serialization.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\util\test_spinlock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\util\test_thread.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Ventanium.props" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug-static|Win32">
+      <Configuration>Debug-static</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-static|x64">
+      <Configuration>Debug-static</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-dll|Win32">
+      <Configuration>Debug-dll</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-dll|x64">
+      <Configuration>Debug-dll</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-static|Win32">
+      <Configuration>Release-static</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-static|x64">
+      <Configuration>Release-static</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-dll|Win32">
+      <Configuration>Release-dll</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-dll|x64">
+      <Configuration>Release-dll</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{EFD7B131-A088-4AE1-B43D-835265E01AE2}</ProjectGuid>
+    <RootNamespace>VentaniumTest</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-dll|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-dll|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-dll|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-dll|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Condition="'$(Platform)'=='Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)-test\</OutDir>
+    <IntDir>$(Configuration)-test\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)-test\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)-test\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-dll|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src;$(VentaniumRoot)test</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);$(VentaniumDefs);VTM_DLL_IMPORT;</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(SolutionDir)$(Configuration);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VentaniumLibs);Ventanium.lib;</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src;$(VentaniumRoot)test</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);$(VentaniumDefs);</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(SolutionDir)$(Configuration);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VentaniumLibs);Ventanium.lib;</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-dll|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src;$(VentaniumRoot)test</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);$(VentaniumDefs);VTM_DLL_IMPORT;</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(SolutionDir)$(Platform)\$(Configuration);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VentaniumLibs);Ventanium.lib;</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-static|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src;$(VentaniumRoot)test</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);$(VentaniumDefs);</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(SolutionDir)$(Platform)\$(Configuration);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VentaniumLibs);Ventanium.lib;</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-dll|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src;$(VentaniumRoot)test</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);$(VentaniumDefs);VTM_DLL_IMPORT;</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(SolutionDir)$(Configuration);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VentaniumLibs);Ventanium.lib;</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src;$(VentaniumRoot)test</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);$(VentaniumDefs);</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(SolutionDir)$(Configuration);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VentaniumLibs);Ventanium.lib;</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-dll|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src;$(VentaniumRoot)test</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);$(VentaniumDefs);VTM_DLL_IMPORT;</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(SolutionDir)$(Platform)\$(Configuration);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VentaniumLibs);Ventanium.lib;</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-static|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>$(VentaniumRoot)src;$(VentaniumRoot)test</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);$(VentaniumDefs);</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)VirtDir1\VirtDir2\%(RelativeDir)</ObjectFileName>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(SolutionDir)$(Platform)\$(Configuration);</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VentaniumLibs);Ventanium.lib;</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="$(VentaniumRoot)test\vtf.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(VentaniumRoot)test\test.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtf.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_dataset.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_elem.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_format.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_list.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_map.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_string.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_variant.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\crypto\test_hash.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\fs\test_config.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\fs\test_file.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\fs\test_log.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_http_server.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_nm.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_nm_dgram.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_nm_stream.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_nm_stream_mt.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_url.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\sql\test_sql.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\util\test_base64.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\util\test_serialization.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\util\test_spinlock.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\util\test_thread.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

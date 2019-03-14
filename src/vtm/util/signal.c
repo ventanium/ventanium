@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Matthias Benkendorf
+ * Copyright (C) 2018-2019 Matthias Benkendorf
  */
 
 #include "signal.h"
@@ -47,18 +47,18 @@ int vtm_signal_default(enum vtm_signal_type sig)
 int vtm_signal_convert_from_os(int psig, enum vtm_signal_type *out)
 {
 	switch (psig) {
-		case SIGINT:	*out = VTM_SIG_INT;  return VTM_OK;
-		case SIGTERM:	*out = VTM_SIG_TERM; return VTM_OK;
-		case SIGSEGV:	*out = VTM_SIG_SEGV; return VTM_OK;
+		case SIGINT:    *out = VTM_SIG_INT;  return VTM_OK;
+		case SIGTERM:   *out = VTM_SIG_TERM; return VTM_OK;
+		case SIGSEGV:   *out = VTM_SIG_SEGV; return VTM_OK;
 
 #ifdef VTM_HAVE_POSIX
-		case SIGHUP:	*out = VTM_SIG_HUP;	 return VTM_OK;
-		case SIGPIPE:	*out = VTM_SIG_PIPE; return VTM_OK;
-		case SIGUSR1:	*out = VTM_SIG_USR1; return VTM_OK;
-		case SIGUSR2:	*out = VTM_SIG_USR2; return VTM_OK;
+		case SIGHUP:    *out = VTM_SIG_HUP;  return VTM_OK;
+		case SIGPIPE:   *out = VTM_SIG_PIPE; return VTM_OK;
+		case SIGUSR1:   *out = VTM_SIG_USR1; return VTM_OK;
+		case SIGUSR2:   *out = VTM_SIG_USR2; return VTM_OK;
 #endif
 
-		default:		break;
+		default:        break;
 	}
 
 	return VTM_E_NOT_SUPPORTED;
@@ -67,18 +67,18 @@ int vtm_signal_convert_from_os(int psig, enum vtm_signal_type *out)
 int vtm_signal_convert_to_os(enum vtm_signal_type sig, int *out)
 {
 	switch (sig) {
-		case VTM_SIG_INT:	*out = SIGINT;  return VTM_OK;
-		case VTM_SIG_TERM:	*out = SIGTERM; return VTM_OK;
-		case VTM_SIG_SEGV:	*out = SIGSEGV; return VTM_OK;
+		case VTM_SIG_INT:   *out = SIGINT;  return VTM_OK;
+		case VTM_SIG_TERM:  *out = SIGTERM; return VTM_OK;
+		case VTM_SIG_SEGV:  *out = SIGSEGV; return VTM_OK;
 
 #ifdef VTM_HAVE_POSIX
-		case VTM_SIG_HUP:	*out = SIGHUP;  return VTM_OK;
-		case VTM_SIG_PIPE:	*out = SIGPIPE; return VTM_OK;
-		case VTM_SIG_USR1:	*out = SIGUSR1; return VTM_OK;
-		case VTM_SIG_USR2:	*out = SIGUSR2; return VTM_OK;
+		case VTM_SIG_HUP:   *out = SIGHUP;  return VTM_OK;
+		case VTM_SIG_PIPE:  *out = SIGPIPE; return VTM_OK;
+		case VTM_SIG_USR1:  *out = SIGUSR1; return VTM_OK;
+		case VTM_SIG_USR2:  *out = SIGUSR2; return VTM_OK;
 #endif
 
-		default:			break;
+		default:            break;
 	}
 
 	return VTM_E_NOT_SUPPORTED;

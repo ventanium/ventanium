@@ -5,14 +5,13 @@
 #include "serialization.h"
 
 #include <math.h>
-#include <float.h>
 #include <vtm/core/error.h>
 
 #define VTM_MANTISSA_23      8388606             /**< 2^23 - 2 */
 #define VTM_MANTISSA_52      4503599627370494ULL /**< 2^52 - 2 */
 
-#define VTM_FLT_EXP_OFFSET   (-FLT_MIN_EXP)
-#define VTM_DBL_EXP_OFFSET   (-DBL_MIN_EXP)
+#define VTM_FLT_EXP_OFFSET   126
+#define VTM_DBL_EXP_OFFSET   1022
 
 int vtm_pack_float(float in, uint32_t *out)
 {

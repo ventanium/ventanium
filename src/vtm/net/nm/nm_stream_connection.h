@@ -12,6 +12,7 @@
 #define VTM_NET_NM_NM_STREAM_CONNECTION_H_
 
 #include <vtm/core/api.h>
+#include <vtm/core/dataset.h>
 
 #ifdef __cplusplus
 extern "C" {

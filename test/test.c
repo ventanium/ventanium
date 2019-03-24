@@ -8,6 +8,7 @@
 #include <stdio.h> /* printf(), fprintf() */
 
 /* core */
+extern void test_vtm_core_blob(void);
 extern void test_vtm_core_elem(void);
 extern void test_vtm_core_string(void);
 extern void test_vtm_core_list(void);
@@ -19,6 +20,7 @@ extern void test_vtm_core_format(void);
 void test_core(void)
 {
 	vtm_test_set_module("core");
+	vtm_test_run(test_vtm_core_blob);
 	vtm_test_run(test_vtm_core_format);
 	vtm_test_run(test_vtm_core_string);
 	vtm_test_run(test_vtm_core_list);

@@ -19,7 +19,7 @@ condition variables simplifies cross-platform development
 
 ### Example: HTTP server
 
-```
+```c
 #include <string.h>
 #include <vtm/net/http/http_server.h>
 #include <vtm/util/signal.h>
@@ -88,7 +88,7 @@ end:
 
 ### Example: SQL database access
 
-```
+```c
 #include <vtm/sql/sqlite/sqlite.h>
 
 int main(void)
@@ -156,7 +156,7 @@ For the sake of clarity there is no error handling included in this example.
 
 ### Example: NetworkMessage UDP Server
 
-```
+```c
 #include <string.h>
 #include <vtm/core/error.h>
 #include <vtm/net/nm/nm_dgram_server.h>

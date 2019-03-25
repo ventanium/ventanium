@@ -28,7 +28,7 @@ vtm_http_srv *srv;
 
 void stop_server(int psig)
 {
-	vtm_signal_safe_puts("Stopping server...\\n");
+	vtm_signal_safe_puts("Stopping server...\n");
 	vtm_http_srv_stop(srv);
 }
 

@@ -217,6 +217,7 @@ VTM_API struct vtm_map_key vtm_map_key_from_ulong(unsigned long val);
 VTM_API struct vtm_map_key vtm_map_key_from_float(float val);
 VTM_API struct vtm_map_key vtm_map_key_from_double(double val);
 VTM_API struct vtm_map_key vtm_map_key_from_str(const char *val);
+VTM_API struct vtm_map_key vtm_map_key_from_blob(const void *val);
 VTM_API struct vtm_map_key vtm_map_key_from_ptr(void *val);
 
 #define VTM_MK_INT8(VAL)    vtm_map_key_from_int8(VAL)
@@ -240,6 +241,7 @@ VTM_API struct vtm_map_key vtm_map_key_from_ptr(void *val);
 #define VTM_MK_FLOAT(VAL)   vtm_map_key_from_floatVAL)
 #define VTM_MK_DOUBLE(VAL)  vtm_map_key_from_double(VAL)
 #define VTM_MK_STR(VAL)     vtm_map_key_from_str(VAL)
+#define VTM_MK_BLOB(VAL)    vtm_map_key_from_blob(VAL)
 #define VTM_MK_PTR(VAL)     vtm_map_key_from_ptr(VAL)
 
 /* value conversion functions */
@@ -265,6 +267,7 @@ VTM_API struct vtm_map_key vtm_map_key_from_ptr(void *val);
 #define VTM_MV_FLOAT(VAL)   VTM_V_FLOAT(VAL)
 #define VTM_MV_DOUBLE(VAL)  VTM_V_DOUBLE(VAL)
 #define VTM_MV_STR(VAL)     VTM_V_STR(VAL)
+#define VTM_MV_BLOB(VAL)    VTM_V_BLOB(VAL)
 #define VTM_MV_PTR(VAL)     VTM_V_PTR(VAL)
 
 #ifdef __cplusplus

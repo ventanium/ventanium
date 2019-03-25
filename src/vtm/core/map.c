@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2018 Matthias Benkendorf
+ * Copyright (C) 2018-2019 Matthias Benkendorf
  */
 
 #include "map.h"
 
 #include <stdarg.h>
+#include <vtm/core/blob.h>
 #include <vtm/core/error.h>
 #include <vtm/core/hash.h>
 #include <vtm/core/string.h>
@@ -512,6 +513,15 @@ struct vtm_map_key vtm_map_key_from_str(const char *val)
 	result.var.data.elem_pointer = (void*) val;
 	result.var.type = VTM_ELEM_STRING;
 	result.hash = vtm_hash_str(val);
+	return result;
+}
+
+struct vtm_map_key vtm_map_key_from_blob(const void *val)
+{
+	struct vtm_map_key result;
+	result.var.data.elem_pointer = (void*) val;
+	result.var.type = VTM_ELEM_BLOB;
+	result.hash = vtm_hash_mem(val, vtm_blob_size(val));
 	return result;
 }
 

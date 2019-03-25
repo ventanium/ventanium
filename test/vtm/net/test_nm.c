@@ -5,11 +5,18 @@
 #include <vtf.h>
 
 #include <string.h>
+#include <vtm/core/blob.h>
 #include <vtm/core/dataset.h>
 #include <vtm/core/math.h>
 
 void test_nm_prepare_request(vtm_dataset *msg)
 {
+	void *blob;
+
+	blob = vtm_blob_new(1);
+	VTM_TEST_ASSERT(blob != NULL, "nm blob allocated");
+	memset(blob, 'T', 1);
+
 	vtm_dataset_set_int8(msg, "INT8", -7);
 	vtm_dataset_set_uint8(msg, "UINT8", 7);
 	vtm_dataset_set_int16(msg, "INT16", -15);
@@ -26,6 +33,7 @@ void test_nm_prepare_request(vtm_dataset *msg)
 	vtm_dataset_set_float(msg, "FLOAT", 1.23456f);
 	vtm_dataset_set_double(msg, "DOUBLE", 1.2345678);
 	vtm_dataset_set_string(msg, "STR", "Hello");
+	vtm_dataset_set_blob(msg, "BLOB", blob);
 }
 
 void test_nm_prepare_response(vtm_dataset *msg)
@@ -46,6 +54,8 @@ void test_nm_prepare_response(vtm_dataset *msg)
 	float fval;
 	double dval;
 	const char *str;
+	const void *blob;
+	void *blob_res;
 
 	i8  = vtm_dataset_get_int8(msg, "INT8");
 	u8  = vtm_dataset_get_uint8(msg, "UINT8");
@@ -63,6 +73,7 @@ void test_nm_prepare_response(vtm_dataset *msg)
 	fval = vtm_dataset_get_float(msg, "FLOAT");
 	dval = vtm_dataset_get_double(msg, "DOUBLE");
 	str = vtm_dataset_get_string(msg, "STR");
+	blob = vtm_dataset_get_blob(msg, "BLOB");
 
 	if (i8 == -7)
 		vtm_dataset_set_int8(msg, "INT8", i8 - 1);
@@ -95,11 +106,20 @@ void test_nm_prepare_response(vtm_dataset *msg)
 		vtm_dataset_set_double(msg, "DOUBLE", 1.0);
 	if (strcmp(str, "Hello") == 0)
 		vtm_dataset_set_string(msg, "STR", "olleH");
+
+	if (blob && ((char*) blob)[0] == 'T') {
+		blob_res = vtm_blob_new(1);
+		if (blob_res) {
+			memset(blob_res, 'Z', 1);
+			vtm_dataset_set_blob(msg, "BLOB", blob_res);
+		}
+	}
 }
 
 void test_nm_check_response(vtm_dataset *msg)
 {
 	const char *str;
+	const void *blob;
 
 	VTM_TEST_CHECK(vtm_dataset_get_int8(msg, "INT8") == -8, "nm response int8");
 	VTM_TEST_CHECK(vtm_dataset_get_uint8(msg, "UINT8") == 8, "nm response uint8");
@@ -118,5 +138,10 @@ void test_nm_check_response(vtm_dataset *msg)
 	VTM_TEST_CHECK(vtm_dataset_get_double(msg, "DOUBLE") == 1.0, "nm response double");
 
 	str = vtm_dataset_get_string(msg, "STR");
+	VTM_TEST_ASSERT(str != NULL, "nm response str check");
 	VTM_TEST_CHECK(strcmp(str, "olleH") == 0, "nm response str");
+
+	blob = vtm_dataset_get_blob(msg, "BLOB");
+	VTM_TEST_ASSERT(blob != NULL, "nm response blob check");
+	VTM_TEST_CHECK(((char*) blob)[0] == 'Z', "nm response blob");
 }

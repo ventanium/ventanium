@@ -5,8 +5,9 @@
 #include "nm_parser_intl.h"
 
 #include <stdlib.h> /* malloc(), free() */
-#include <vtm/core/types.h>
+#include <vtm/core/blob.h>
 #include <vtm/core/error.h>
+#include <vtm/core/types.h>
 #include <vtm/core/variant.h>
 #include <vtm/net/nm/nm_protocol_intl.h>
 #include <vtm/util/serialization.h>
@@ -133,6 +134,7 @@ enum vtm_net_recv_stat vtm_nm_parser_run(struct vtm_nm_parser *par, struct vtm_b
 						break;
 
 					case VTM_ELEM_STRING:
+					case VTM_ELEM_BLOB:
 						par->state = VTM_NM_PARSE_VALUE_LEN;
 						break;
 
@@ -178,6 +180,13 @@ enum vtm_net_recv_stat vtm_nm_parser_run(struct vtm_nm_parser *par, struct vtm_b
 						}
 						vtm_buf_getm(buf, par->value.elem_pointer, par->value_len);
 						((char*) par->value.elem_pointer)[par->value_len] = '\0';
+						break;
+
+					case VTM_ELEM_BLOB:
+						par->value.elem_pointer = vtm_blob_new(par->value_len);
+						if (!par->value.elem_pointer)
+							return VTM_NET_RECV_STAT_ERROR;
+						vtm_buf_getm(buf, par->value.elem_pointer, par->value_len);
 						break;
 
 					default:

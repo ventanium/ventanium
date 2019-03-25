@@ -6,6 +6,7 @@
 
 #include <stdlib.h> /* free() */
 #include <string.h> /* strlen() */
+#include <vtm/core/blob.h>
 #include <vtm/core/error.h>
 #include <vtm/core/format.h>
 #include <vtm/net/common.h>
@@ -30,6 +31,7 @@ int vtm_nm_type_to_num(enum vtm_elem_type type, unsigned char *c)
 		case VTM_ELEM_FLOAT:     *c = VTM_NM_TNUM_FLOAT;   return VTM_OK;
 		case VTM_ELEM_DOUBLE:    *c = VTM_NM_TNUM_DOUBLE;  return VTM_OK;
 		case VTM_ELEM_STRING:    *c = VTM_NM_TNUM_STRING;  return VTM_OK;
+		case VTM_ELEM_BLOB:      *c = VTM_NM_TNUM_BLOB;    return VTM_OK;
 
 		default:
 			break;
@@ -56,6 +58,7 @@ int vtm_nm_type_from_num(enum vtm_elem_type *type, unsigned char c)
 		case VTM_NM_TNUM_FLOAT:  *type = VTM_ELEM_FLOAT;   return VTM_OK;
 		case VTM_NM_TNUM_DOUBLE: *type = VTM_ELEM_DOUBLE;  return VTM_OK;
 		case VTM_NM_TNUM_STRING: *type = VTM_ELEM_STRING;  return VTM_OK;
+		case VTM_NM_TNUM_BLOB:   *type = VTM_ELEM_BLOB;    return VTM_OK;
 
 		default:
 			break;
@@ -138,7 +141,19 @@ int vtm_nm_msg_to_buf(vtm_dataset *msg, struct vtm_buf *buf)
 			case VTM_ELEM_STRING:
 				len = strlen((char*) entry->var->data.elem_pointer);
 				if (len > UINT32_MAX) {
-					rc = vtm_err_sets(VTM_E_NOT_SUPPORTED, "String too long");
+					rc = vtm_err_sets(VTM_E_NOT_SUPPORTED, "String too large");
+					goto end;
+				}
+
+				var32 = (uint32_t) len;
+				vtm_buf_puto(buf, &var32, sizeof(uint32_t), sys_order);
+				vtm_buf_putm(buf, entry->var->data.elem_pointer, len);
+				break;
+
+			case VTM_ELEM_BLOB:
+				len = vtm_blob_size(entry->var->data.elem_pointer);
+				if (len > UINT32_MAX) {
+					rc = vtm_err_sets(VTM_E_NOT_SUPPORTED, "Blob too large");
 					goto end;
 				}
 

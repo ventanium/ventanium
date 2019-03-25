@@ -5,8 +5,8 @@
 #ifndef VTM_NET_NM_NM_PROTOCOL_INTL_H_
 #define VTM_NET_NM_NM_PROTOCOL_INTL_H_
 
-#include <vtm/core/buffer.h>
-#include <vtm/core/dataset.h>
+#include <vtm/core/elem.h>
+#include <vtm/net/nm/nm_protocol.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,12 +30,10 @@ extern "C" {
 #define VTM_NM_TNUM_FLOAT          13
 #define VTM_NM_TNUM_DOUBLE         14
 #define VTM_NM_TNUM_STRING         15
+#define VTM_NM_TNUM_BLOB           16
 
 int vtm_nm_type_to_num(enum vtm_elem_type type, unsigned char *c);
 int vtm_nm_type_from_num(enum vtm_elem_type *type, unsigned char c);
-
-int vtm_nm_msg_to_buf(vtm_dataset *msg, struct vtm_buf *buf);
-int vtm_nm_msg_from_buf(vtm_dataset *msg, struct vtm_buf *buf);
 
 #ifdef __cplusplus
 }

@@ -385,7 +385,6 @@ static bool vtm_http_srv_http_handle_request(vtm_http_srv *srv, vtm_dataset *wd,
 		case VTM_HTTP_RES_ACT_UPGRADE_WS:
 			vtm_http_srv_http_con_upgrade_ws(srv, wd, con, res);
 			return false;
-			break;
 	}
 
 	return false;

@@ -135,6 +135,11 @@ const char* vtm_variant_as_str(struct vtm_variant *var)
 	return var->str;
 }
 
+const void* vtm_variant_as_blob(const struct vtm_variant *var)
+{
+	VTM_VARIANT_AS(blob);
+}
+
 void* vtm_variant_as_ptr(const struct vtm_variant *var)
 {
 	VTM_VARIANT_AS(ptr);
@@ -254,6 +259,11 @@ struct vtm_variant vtm_variant_from_double(double val)
 struct vtm_variant vtm_variant_from_str(char *val)
 {
 	VTM_VARIANT_FROM(pointer, VTM_ELEM_STRING);
+}
+
+struct vtm_variant vtm_variant_from_blob(void *val)
+{
+	VTM_VARIANT_FROM(pointer, VTM_ELEM_BLOB);
 }
 
 struct vtm_variant vtm_variant_from_ptr(void *val)

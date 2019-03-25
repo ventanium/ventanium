@@ -4,12 +4,18 @@
 
 #include <vtf.h>
 
-#include <string.h> /* strcmp() */
+#include <string.h> /* strcmp(), memcpy(), memcmp() */
+#include <vtm/core/blob.h>
 #include <vtm/core/error.h>
 #include <vtm/sql/sql.h>
 
 #define SQL_INSERT   "INSERT INTO users(number, msg) VALUES(10, NULL)"
 #define SQL_INS_PREP "INSERT INTO users(number, msg) VALUES(:num, :msg)"
+
+static unsigned char BLOB_DATA[] = {
+	0x00, 0x13, 0x75, 0xaf, 0x43, 0x92, 0xee, 0x10,
+	0x50, 0x39, 0x9a, 0xb1, 0x20, 0x86, 0x23, 0x01,
+};
 
 static void test_sql_simple(vtm_sql_con *con, vtm_dataset *bind)
 {
@@ -18,31 +24,32 @@ static void test_sql_simple(vtm_sql_con *con, vtm_dataset *bind)
 	struct vtm_sql_result result;
 	unsigned int row_count;
 	vtm_dataset *row;
-	
+
 	/* Execute - DROP */
 	rc = vtm_sql_execute(con, "DROP TABLE IF EXISTS users");
 	VTM_TEST_ASSERT(rc == VTM_OK, "sql drop");
-	
+
 	/* Execute - CREATE */
 	rc = vtm_sql_execute(con, "CREATE TABLE IF NOT EXISTS users ("
 				"user_id INTEGER NOT NULL /*!40101 AUTO_INCREMENT */,"
 				"number int(11) NOT NULL,"
 				"msg varchar(64) DEFAULT NULL,"
 				"ts_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+				"photo BLOB DEFAULT NULL,"
 				"PRIMARY KEY(user_id)"
 				")");
 	VTM_TEST_ASSERT(rc == VTM_OK, "sql create");
-	
+
 	/* Execute - INSERT */
 	rc = vtm_sql_execute(con, SQL_INSERT);
 	VTM_TEST_CHECK(rc == VTM_OK, "sql insert");
-	
+
 	/* ExecutePrepared - INSERT */
 	vtm_dataset_set_int(bind, "num", 10);
 	vtm_dataset_set_string(bind, "msg", "ABC");
 	rc = vtm_sql_execute_prepared(con, SQL_INS_PREP, bind);
 	VTM_TEST_CHECK(rc == VTM_OK, "sql insert prepared");
-	
+
 	/* EcxecutePrepared - INSERT with NULL */
 	vtm_dataset_clear(bind);
 	vnull = VTM_V_NULL();
@@ -50,14 +57,14 @@ static void test_sql_simple(vtm_sql_con *con, vtm_dataset *bind)
 	vtm_dataset_set_variant(bind, "msg", &vnull);
 	rc = vtm_sql_execute_prepared(con, SQL_INS_PREP, bind);
 	VTM_TEST_CHECK(rc == VTM_OK, "sql insert prepared with NULL");
-	
+
 	/* QueryPrepared - INSERT - NO Result */
 	vtm_dataset_clear(bind);
 	vtm_dataset_set_int(bind, "num", 30);
 	vtm_dataset_set_string(bind, "msg", "DEF");
 	rc = vtm_sql_query_prepared(con, SQL_INS_PREP, bind, &result);
 	VTM_TEST_CHECK(rc != VTM_OK, "sql insert query-prepared error expected");
-	
+
 	/* QueryPrepared - SELECT */
 	vtm_dataset_clear(bind);
 	vtm_dataset_set_int(bind, "p1", 4);
@@ -72,11 +79,11 @@ static void test_sql_simple(vtm_sql_con *con, vtm_dataset *bind)
 	VTM_TEST_ASSERT(row != NULL, "sql row");
 	while(vtm_sql_result_fetch_row(&result, row) == VTM_OK)
 		row_count++;
-	
+
 	VTM_TEST_CHECK(row_count == 3, "sql query-prepared check result size");
 	vtm_dataset_free(row);
 	vtm_sql_result_release(&result);
-	
+
 	/* Transaction Test */
 	rc = vtm_sql_set_auto_commit(con, false);
 	VTM_TEST_CHECK(rc == VTM_OK, "sql autocommit off");
@@ -90,14 +97,14 @@ static void test_sql_simple(vtm_sql_con *con, vtm_dataset *bind)
 	VTM_TEST_CHECK(rc == VTM_OK, "sql commit");
 	rc = vtm_sql_set_auto_commit(con, true);
 	VTM_TEST_CHECK(rc == VTM_OK, "sql autocommit on");
-	
+
 	/* Query - SELECT */
 	rc = vtm_sql_query(con, "SELECT * FROM users WHERE msg IS NULL", &result);
 	VTM_TEST_ASSERT(rc == VTM_OK, "sql query");
 
 	rc = vtm_sql_result_fetch_all(&result);
 	VTM_TEST_CHECK(rc == VTM_OK, "sql query - result fetch all");
-	
+
 	VTM_TEST_CHECK(result.row_count == 3, "sql query - check result size");
 	vtm_sql_result_release(&result);
 }
@@ -162,6 +169,41 @@ static void test_sql_stmt(vtm_sql_con *con, vtm_dataset *bind)
 	vtm_sql_stmt_release(&stmt);
 }
 
+static void test_sql_blob(vtm_sql_con *con, vtm_dataset *bind)
+{
+	int rc;
+	void *blob1;
+	const void *blob2;
+	struct vtm_sql_result result;
+
+	/* prepare blob */
+	blob1 = vtm_blob_new(sizeof(BLOB_DATA));
+	VTM_TEST_ASSERT(blob1 != NULL, "blob allocated");
+	memcpy(blob1, BLOB_DATA, vtm_blob_size(blob1));
+
+	/* insert blob */
+	vtm_dataset_set_int(bind, "num", 1);
+	vtm_dataset_set_blob(bind, "blob", blob1);
+	rc = vtm_sql_execute_prepared(con, "INSERT INTO users(number, photo)"
+		"VALUES(:num, :blob)", bind);
+	VTM_TEST_CHECK(rc == VTM_OK, "sql blob insert");
+
+	/* retrieve blob */
+	rc = vtm_sql_query(con, "SELECT * FROM users WHERE photo IS NOT NULL", &result);
+	VTM_TEST_CHECK(rc == VTM_OK, "sql blob query");
+
+	rc = vtm_sql_result_fetch_all(&result);
+	VTM_TEST_CHECK(rc == VTM_OK, "sql blob result fetch all");
+	VTM_TEST_CHECK(result.row_count == 1, "sql blob result row count");
+
+	blob2 = vtm_dataset_get_blob(&result.rows[0], "photo");
+	VTM_TEST_ASSERT(blob2 != NULL, "sql blob result row");
+	VTM_TEST_CHECK(vtm_blob_size(blob2) == sizeof(BLOB_DATA), "sql blob result size");
+	VTM_TEST_CHECK(memcmp(blob2, BLOB_DATA, sizeof(BLOB_DATA)) == 0, "sql blob result content");
+
+	vtm_sql_result_release(&result);
+}
+
 void test_sql_generic(vtm_sql_con *con)
 {
 	vtm_dataset *bind;
@@ -169,14 +211,15 @@ void test_sql_generic(vtm_sql_con *con)
 	/* create bind */
 	bind = vtm_dataset_new();
 	VTM_TEST_ASSERT(bind != NULL, "sql param bind");
-		
+
 	/* run tests */
 	test_sql_simple(con, bind);
 	test_sql_stmt(con, bind);
+	test_sql_blob(con, bind);
 
 	/* free bind */
 	vtm_dataset_free(bind);
-	
+
 	/* free connection */
 	vtm_sql_con_free(con);
 	VTM_TEST_PASSED("sql con free");

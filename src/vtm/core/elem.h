@@ -35,7 +35,7 @@ enum vtm_elem_type
 	VTM_ELEM_UINT64,   /**< unsigned 64 bit integer */
 	VTM_ELEM_BOOL,     /**< boolean value */
 	VTM_ELEM_CHAR,     /**< char (signed or unsigned depends on platform) */
-	VTM_ELEM_SCHAR,     /**< signed char */
+	VTM_ELEM_SCHAR,    /**< signed char */
 	VTM_ELEM_UCHAR,    /**< unsigned char */
 	VTM_ELEM_SHORT,    /**< signed short (width depends on platform) */
 	VTM_ELEM_USHORT,   /**< unsigned short (width depends on platform) */
@@ -46,6 +46,7 @@ enum vtm_elem_type
 	VTM_ELEM_FLOAT,    /**< float value */
 	VTM_ELEM_DOUBLE,   /**< double value */
 	VTM_ELEM_STRING,   /**< NUL-terminated string */
+	VTM_ELEM_BLOB,     /**< memory block */
 	VTM_ELEM_POINTER   /**< raw pointer */
 };
 
@@ -122,6 +123,7 @@ VTM_API float vtm_elem_as_float(enum vtm_elem_type type, const union vtm_elem *s
 VTM_API double vtm_elem_as_double(enum vtm_elem_type type, const union vtm_elem *src);
 
 VTM_API char* vtm_elem_as_str(enum vtm_elem_type type, const union vtm_elem *src);
+VTM_API void* vtm_elem_as_blob(enum vtm_elem_type type, const union vtm_elem *src);
 VTM_API void* vtm_elem_as_ptr(enum vtm_elem_type type, const union vtm_elem *src);
 
 /**
@@ -165,6 +167,7 @@ VTM_API bool vtm_elem_cmp_float(union vtm_elem *e1, union vtm_elem *e2);
 VTM_API bool vtm_elem_cmp_double(union vtm_elem *e1, union vtm_elem *e2);
 VTM_API bool vtm_elem_cmp_str(union vtm_elem *e1, union vtm_elem *e2);
 VTM_API bool vtm_elem_cmp_strcase(union vtm_elem *e1, union vtm_elem *e2);
+VTM_API bool vtm_elem_cmp_blob(union vtm_elem *e1, union vtm_elem *e2);
 VTM_API bool vtm_elem_cmp_ptr(union vtm_elem *e1, union vtm_elem *e2);
 
 #ifdef __cplusplus

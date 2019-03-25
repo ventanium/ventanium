@@ -7,6 +7,7 @@
 #include <string.h> /* memcpy() */
 #include <ctype.h> /* tolower() */
 #include <vtm/core/error.h>
+#include <vtm/core/blob.h>
 
 #define VTM_HASH_INIT                     2503  /* prime */
 #define VTM_HASH_MAGIC_32           0x54321bb7  /* prime */
@@ -99,6 +100,7 @@ vtm_hash_elem_fn vtm_hash_elem_get_fn(enum vtm_elem_type type)
 		case VTM_ELEM_FLOAT:    return vtm_hash_elem_float;
 		case VTM_ELEM_DOUBLE:   return vtm_hash_elem_double;
 		case VTM_ELEM_STRING:   return vtm_hash_elem_str;
+		case VTM_ELEM_BLOB:     return vtm_hash_elem_blob;
 		case VTM_ELEM_POINTER:  return vtm_hash_elem_ptr;
 	}
 
@@ -214,6 +216,11 @@ uint32_t vtm_hash_elem_str(union vtm_elem *el)
 uint32_t vtm_hash_elem_strcase(union vtm_elem *el)
 {
 	return vtm_hash_strcase(el->elem_pointer);
+}
+
+uint32_t vtm_hash_elem_blob(union vtm_elem *el)
+{
+	return vtm_hash_mem(el->elem_pointer, vtm_blob_size(el->elem_pointer));
 }
 
 uint32_t vtm_hash_elem_ptr(union vtm_elem *el)

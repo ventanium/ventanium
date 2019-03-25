@@ -107,6 +107,7 @@ VTM_API uint32_t vtm_hash_elem_float(union vtm_elem *el);
 VTM_API uint32_t vtm_hash_elem_double(union vtm_elem *el);
 VTM_API uint32_t vtm_hash_elem_str(union vtm_elem *el);
 VTM_API uint32_t vtm_hash_elem_strcase(union vtm_elem *el);
+VTM_API uint32_t vtm_hash_elem_blob(union vtm_elem *el);
 VTM_API uint32_t vtm_hash_elem_ptr(union vtm_elem *el);
 
 #ifdef __cplusplus

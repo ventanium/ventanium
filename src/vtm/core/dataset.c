@@ -6,6 +6,7 @@
 
 #include <stdlib.h> /* malloc() */
 
+#include <vtm/core/blob.h>
 #include <vtm/core/elem.h>
 #include <vtm/core/error.h>
 #include <vtm/core/flag.h>
@@ -116,10 +117,21 @@ void vtm_dataset_free_node(struct vtm_dataset_node *node)
 		free(node->key.data.elem_pointer);
 
 	/* free val pointer? */
-	if (node->free_val_ptr &&
-		(node->value.type == VTM_ELEM_STRING ||
-		 node->value.type == VTM_ELEM_POINTER))
-		free(node->value.data.elem_pointer);
+	if (node->free_val_ptr) {
+		switch (node->value.type) {
+			case VTM_ELEM_BLOB:
+				vtm_blob_free(node->value.data.elem_pointer);
+				break;
+
+			case VTM_ELEM_STRING:
+			case VTM_ELEM_POINTER:
+				free(node->value.data.elem_pointer);
+				break;
+
+			default:
+				break;
+		}
+	}
 }
 
 static void vtm_dataset_put_node(vtm_dataset *ds, struct vtm_dataset_node *node)
@@ -224,7 +236,7 @@ void vtm_dataset_set_variant(vtm_dataset *ds, const char *name, struct vtm_varia
 		vtm_err_oom();
 
 	static_key = vtm_flag_is_set(ds->hints, VTM_DS_HINT_STATIC_NAMES);
-	
+
 	node->key = static_key ? VTM_V_STR((char*) name) : VTM_V_STR(vtm_str_copy(name));
 	node->value.type = var->type;
 	node->value.data = var->data;
@@ -449,6 +461,16 @@ const char* vtm_dataset_get_string(vtm_dataset *ds, const char *name)
 void vtm_dataset_set_string(vtm_dataset *ds, const char *name, const char *val)
 {
 	VTM_DATASET_SETX(VTM_V_STR, vtm_str_copy(val), true);
+}
+
+const void* vtm_dataset_get_blob(vtm_dataset *ds, const char *name)
+{
+	VTM_DATASET_GET(blob, NULL);
+}
+
+void vtm_dataset_set_blob(vtm_dataset *ds, const char *name, const void *val)
+{
+	VTM_DATASET_SETX(VTM_V_BLOB, (void*) val, true);
 }
 
 void* vtm_dataset_get_pointer(vtm_dataset *ds, const char *name)

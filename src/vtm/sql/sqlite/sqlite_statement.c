@@ -4,7 +4,9 @@
 
 #include "sqlite_statement_intl.h"
 
+#include <string.h> /* memcpy() */
 #include <sqlite3.h>
+#include <vtm/core/blob.h>
 #include <vtm/core/error.h>
 #include <vtm/core/string.h>
 #include <vtm/sql/sql_error.h>
@@ -211,6 +213,7 @@ int vtm_sqlite_stmt_query(struct vtm_sql_stmt *stmt, struct vtm_sql_result *resu
 static int vtm_sqlite_stmt_bind_variant(sqlite3_stmt *stmt, int index, struct vtm_variant *var)
 {
 	int rc;
+	const void *blob;
 
 	if (!var) {
 		sqlite3_bind_null(stmt, index);
@@ -253,7 +256,13 @@ static int vtm_sqlite_stmt_bind_variant(sqlite3_stmt *stmt, int index, struct vt
 
 		case VTM_ELEM_STRING:
 			rc = sqlite3_bind_text(stmt, index, vtm_variant_as_str(var),
-			                  -1, SQLITE_STATIC);
+				-1, SQLITE_STATIC);
+			break;
+
+		case VTM_ELEM_BLOB:
+			blob = vtm_variant_as_blob(var);
+			rc = sqlite3_bind_blob(stmt, index, blob, vtm_blob_size(blob),
+				SQLITE_STATIC);
 			break;
 
 		default:
@@ -394,6 +403,8 @@ static int vtm_sqlite_stmt_save_row_values(struct vtm_sqlite_stmt_data *stmt_dat
 {
 	int i;
 	sqlite3_stmt *stmt;
+	size_t len;
+	void *blob;
 
 	stmt = stmt_data->stmt;
 
@@ -415,7 +426,14 @@ static int vtm_sqlite_stmt_save_row_values(struct vtm_sqlite_stmt_data *stmt_dat
 				break;
 
 			case SQLITE_BLOB:
-				return VTM_E_NOT_SUPPORTED;
+				len = sqlite3_column_bytes(stmt, i);
+				blob = vtm_blob_new(len);
+				if (!blob)
+					return vtm_err_get_code();
+
+				memcpy(blob, sqlite3_column_blob(stmt, i), len);
+				vtm_dataset_set_blob(row, res->columns[i], blob);
+				break;
 		}
 	}
 

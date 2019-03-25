@@ -7,6 +7,7 @@
 #include <stdlib.h> /* malloc() */
 #include <string.h> /* strlen(), memcpy() */
 #include <time.h>
+#include <vtm/core/blob.h>
 #include <vtm/core/error.h>
 #include <vtm/core/string.h>
 
@@ -65,6 +66,11 @@ int vtm_mysql_bind_buf_init_from_field(struct vtm_mysql_bind_buf *buf, MYSQL_FIE
 			use_static = false;
 			break;
 
+		case MYSQL_TYPE_BLOB:
+			buf->content_length = field->length;
+			use_static = false;
+			break;
+
 		default:
 			return VTM_E_NOT_SUPPORTED;
 	}
@@ -87,10 +93,11 @@ int vtm_mysql_bind_buf_init_from_variant(struct vtm_mysql_bind_buf *buf, struct 
 {
 	size_t len;
 	const char *str;
+	const void *blob;
 	bool use_static;
 
 	vtm_mysql_bind_buf_release(buf);
-	
+
 	if (!var) {
 		buf->type = MYSQL_TYPE_NULL;
 		buf->content_null = true;
@@ -98,7 +105,7 @@ int vtm_mysql_bind_buf_init_from_variant(struct vtm_mysql_bind_buf *buf, struct 
 		buf->data = NULL;
 		return VTM_OK;
 	}
-	
+
 	use_static = true;
 	switch (var->type) {
 		case VTM_ELEM_NULL:
@@ -171,6 +178,20 @@ int vtm_mysql_bind_buf_init_from_variant(struct vtm_mysql_bind_buf *buf, struct 
 			use_static = false;
 			break;
 
+		case VTM_ELEM_BLOB:
+			buf->type = MYSQL_TYPE_BLOB;
+			blob = vtm_variant_as_blob(var);
+			len = vtm_blob_size(blob);
+			buf->data = malloc(len);
+			if (!buf->data) {
+				vtm_err_oom();
+				return vtm_err_get_code();
+			}
+			memcpy(buf->data, blob, len);
+			buf->content_length = len;
+			use_static = false;
+			break;
+
 		default:
 			return VTM_E_NOT_SUPPORTED;
 	}
@@ -191,8 +212,10 @@ void vtm_mysql_bind_buf_release(struct vtm_mysql_bind_buf *buf)
 
 int vtm_mysql_bind_buf_read(struct vtm_mysql_bind_buf *buf, vtm_dataset *ds)
 {
+	void *blob;
+
 	VTM_ASSERT(buf->name != NULL);
-	
+
 	if (buf->content_null)
 		return VTM_OK;
 
@@ -231,6 +254,14 @@ int vtm_mysql_bind_buf_read(struct vtm_mysql_bind_buf *buf, vtm_dataset *ds)
 
 		case MYSQL_TYPE_VAR_STRING:
 			vtm_dataset_set_string(ds, buf->name, (char*) buf->data);
+			break;
+
+		case MYSQL_TYPE_BLOB:
+			blob = vtm_blob_new(buf->content_length);
+			if (!blob)
+				return vtm_err_get_code();
+			memcpy(blob, buf->data, buf->content_length);
+			vtm_dataset_set_blob(ds, buf->name, blob);
 			break;
 
 		default:

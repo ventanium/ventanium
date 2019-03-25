@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2018 Matthias Benkendorf
+ * Copyright (C) 2018-2019 Matthias Benkendorf
  */
 
 #include "elem.h"
 
 #include <string.h>
+#include <vtm/core/blob.h>
 #include <vtm/core/convert.h>
 #include <vtm/core/error.h>
 #include <vtm/core/string.h>
@@ -38,6 +39,7 @@ size_t vtm_elem_size(enum vtm_elem_type type)
 		case VTM_ELEM_FLOAT:    return sizeof(float);
 		case VTM_ELEM_DOUBLE:   return sizeof(double);
 		case VTM_ELEM_STRING:   return sizeof(char*);
+		case VTM_ELEM_BLOB:     return sizeof(void*);
 		case VTM_ELEM_POINTER:  return sizeof(void*);
 	}
 	return 0;
@@ -130,6 +132,10 @@ void vtm_elem_parse(enum vtm_elem_type type, union vtm_elem *dst, va_list *ap)
 			dst->elem_pointer = vtm_str_copy(va_arg(*ap, char*));
 			break;
 
+		case VTM_ELEM_BLOB:
+			dst->elem_pointer = va_arg(*ap, void*);
+			break;
+
 		case VTM_ELEM_POINTER:
 			dst->elem_pointer = va_arg(*ap, void*);
 			break;
@@ -164,6 +170,7 @@ void vtm_elem_parse(enum vtm_elem_type type, union vtm_elem *dst, va_list *ap)
 	case VTM_ELEM_FLOAT:    return (RTYPE) src->elem_float;               \
 	case VTM_ELEM_DOUBLE:   return (RTYPE) src->elem_double;              \
 	case VTM_ELEM_STRING:   return (RTYPE) vtm_conv_str_int64((char*) src->elem_pointer); \
+	case VTM_ELEM_BLOB:     return (RTYPE) 0;                             \
 	case VTM_ELEM_POINTER:  return (RTYPE) (intptr_t) src->elem_pointer;  \
 	default:                                                              \
 		VTM_ABORT_NOT_SUPPORTED;                                          \
@@ -193,6 +200,7 @@ void vtm_elem_parse(enum vtm_elem_type type, union vtm_elem *dst, va_list *ap)
 	case VTM_ELEM_FLOAT:    return (RTYPE) src->elem_float;               \
 	case VTM_ELEM_DOUBLE:   return (RTYPE) src->elem_double;              \
 	case VTM_ELEM_STRING:   return (RTYPE) vtm_conv_str_uint64((char*) src->elem_pointer); \
+	case VTM_ELEM_BLOB:     return (RTYPE) 0;                             \
 	case VTM_ELEM_POINTER:  return (RTYPE) (uintptr_t) src->elem_pointer; \
 	default:                                                              \
 		VTM_ABORT_NOT_SUPPORTED;                                          \
@@ -262,6 +270,7 @@ bool vtm_elem_as_bool(enum vtm_elem_type type, const union vtm_elem *src)
 		case VTM_ELEM_FLOAT:    return src->elem_float ? true : false;
 		case VTM_ELEM_DOUBLE:   return src->elem_double ? true : false;
 		case VTM_ELEM_STRING:   return strcmp(VTM_ELEM_BOOL_TRUE, (char*) src->elem_pointer) == 0 ? true : false;
+		case VTM_ELEM_BLOB:     return false;
 		case VTM_ELEM_POINTER:  return false;
 		default:
 			VTM_ABORT_NOT_SUPPORTED;
@@ -346,6 +355,7 @@ double vtm_elem_as_double(enum vtm_elem_type type, const union vtm_elem *src)
 		case VTM_ELEM_FLOAT:    return (double) src->elem_float;
 		case VTM_ELEM_DOUBLE:   return (double) src->elem_double;
 		case VTM_ELEM_STRING:   return vtm_conv_str_double((char*) src->elem_pointer);
+		case VTM_ELEM_BLOB:     return 0;
 		case VTM_ELEM_POINTER:  return 0;
 		default:
 			VTM_ABORT_NOT_SUPPORTED;
@@ -376,10 +386,19 @@ char* vtm_elem_as_str(enum vtm_elem_type type, const union vtm_elem *src)
 		case VTM_ELEM_FLOAT:    return vtm_conv_double_str(src->elem_float);
 		case VTM_ELEM_DOUBLE:   return vtm_conv_double_str(src->elem_double);
 		case VTM_ELEM_STRING:   return (char*) src->elem_pointer;
+		case VTM_ELEM_BLOB:     return vtm_conv_blob_str(src->elem_pointer);
 		case VTM_ELEM_POINTER:  return vtm_conv_uint64_str((uintptr_t) src->elem_pointer);
 		default:
 			VTM_ABORT_NOT_SUPPORTED;
 	}
+	return NULL;
+}
+
+void* vtm_elem_as_blob(enum vtm_elem_type type, const union vtm_elem *src)
+{
+	if (type == VTM_ELEM_BLOB)
+		return src->elem_pointer;
+
 	return NULL;
 }
 
@@ -502,6 +521,24 @@ bool vtm_elem_cmp_strcase(union vtm_elem *e1, union vtm_elem *e2)
 	return vtm_str_casecmp(e1->elem_pointer, e2->elem_pointer) == 0;
 }
 
+bool vtm_elem_cmp_blob(union vtm_elem *e1, union vtm_elem *e2)
+{
+	size_t s1, s2;
+
+	if (!e1->elem_pointer && !e2->elem_pointer)
+		return true;
+	else if (!e1->elem_pointer || !e2->elem_pointer)
+		return false;
+
+	s1 = vtm_blob_size(e1->elem_pointer);
+	s2 = vtm_blob_size(e2->elem_pointer);
+
+	if (s1 != s2)
+		return false;
+
+	return memcmp(e1->elem_pointer, e2->elem_pointer, s1) == 0;
+}
+
 bool vtm_elem_cmp_ptr(union vtm_elem *e1, union vtm_elem *e2)
 {
 	return e1->elem_pointer == e2->elem_pointer;
@@ -532,6 +569,7 @@ vtm_elem_cmp_fn vtm_elem_get_cmp_fn(enum vtm_elem_type type)
 		case VTM_ELEM_FLOAT:    return vtm_elem_cmp_float;
 		case VTM_ELEM_DOUBLE:   return vtm_elem_cmp_double;
 		case VTM_ELEM_STRING:   return vtm_elem_cmp_str;
+		case VTM_ELEM_BLOB:     return vtm_elem_cmp_blob;
 		case VTM_ELEM_POINTER:  return vtm_elem_cmp_ptr;
 	}
 

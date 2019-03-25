@@ -76,6 +76,7 @@ VTM_API float vtm_variant_as_float(const struct vtm_variant *var);
 VTM_API double vtm_variant_as_double(const struct vtm_variant *var);
 
 VTM_API const char* vtm_variant_as_str(struct vtm_variant *var);
+VTM_API const void* vtm_variant_as_blob(const struct vtm_variant *var);
 VTM_API void* vtm_variant_as_ptr(const struct vtm_variant *var);
 
 /* variant initializers */
@@ -101,6 +102,7 @@ VTM_API struct vtm_variant vtm_variant_from_ulong(unsigned long val);
 VTM_API struct vtm_variant vtm_variant_from_float(float val);
 VTM_API struct vtm_variant vtm_variant_from_double(double val);
 VTM_API struct vtm_variant vtm_variant_from_str(char *val);
+VTM_API struct vtm_variant vtm_variant_from_blob(void *val);
 VTM_API struct vtm_variant vtm_variant_from_ptr(void *val);
 
 /* shorthand macros */
@@ -126,6 +128,7 @@ VTM_API struct vtm_variant vtm_variant_from_ptr(void *val);
 #define VTM_V_FLOAT(VAL)   vtm_variant_from_float(VAL)
 #define VTM_V_DOUBLE(VAL)  vtm_variant_from_double(VAL)
 #define VTM_V_STR(VAL)     vtm_variant_from_str(VAL)
+#define VTM_V_BLOB(VAL)    vtm_variant_from_blob(VAL)
 #define VTM_V_PTR(VAL)     vtm_variant_from_ptr(VAL)
 
 #ifdef __cplusplus

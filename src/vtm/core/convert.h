@@ -46,6 +46,15 @@ VTM_API char* vtm_conv_uint64_str(uint64_t num);
 VTM_API char* vtm_conv_double_str(double r);
 
 /**
+ * Returns a hex-string representation of the blob contents.
+ *
+ * @param blob the blob that should be represented as string
+ * @return a hex-string describing the blob memory
+ * @return NULL if memory allocation failed
+ */
+VTM_API char* vtm_conv_blob_str(void *blob);
+
+/**
  * Parses signed 64 bit integer value from string.
  *
  * @param in the NUL-terminated input string

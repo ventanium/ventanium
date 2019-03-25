@@ -154,6 +154,7 @@ int vtm_list_add(vtm_list *li, struct vtm_variant var)
 		case VTM_ELEM_DOUBLE:   VTM_LIST_WRITE_VAR(double, double); break;
 
 		case VTM_ELEM_STRING:
+		case VTM_ELEM_BLOB:
 		case VTM_ELEM_POINTER:  VTM_LIST_WRITE_VAR(void*, pointer); break;
 	}
 
@@ -208,6 +209,7 @@ int vtm_list_add_va(vtm_list *li, ...)
 		case VTM_ELEM_DOUBLE:   VTM_LIST_WRITE(double); break;
 
 		case VTM_ELEM_STRING:   VTM_LIST_WRITE(char*); break;
+		case VTM_ELEM_BLOB:     VTM_LIST_WRITE(void*); break;
 		case VTM_ELEM_POINTER:  VTM_LIST_WRITE(void*); break;
 	}
 

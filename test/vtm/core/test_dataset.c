@@ -4,8 +4,10 @@
 
 #include <vtf.h>
 
-#include <vtm/core/math.h>
+#include <string.h>
+#include <vtm/core/blob.h>
 #include <vtm/core/dataset.h>
+#include <vtm/core/math.h>
 
 #define VTM_TEST_NUMBER(DS, FIELD, VAL)                                                                          \
 	do {                                                                                                         \
@@ -101,8 +103,35 @@ static void test_dataset(void)
 	VTM_TEST_PASSED("allocation free");
 }
 
+static void test_dataset_blob(void)
+{
+	vtm_dataset *ds;
+	void *blob1;
+	const void *blob2;
+
+	/* prepare blob */
+	blob1 = vtm_blob_new(16);
+	VTM_TEST_ASSERT(blob1 != NULL, "blob allocation");
+	strcpy(blob1, "TESTSTRING");
+
+	/* test blob */
+	ds = vtm_dataset_new();
+	VTM_TEST_ASSERT(ds != NULL, "dataset allocation");
+
+	vtm_dataset_set_blob(ds, "blob", blob1);
+	blob2 = vtm_dataset_get_blob(ds, "blob");
+
+	VTM_TEST_CHECK(blob1 == blob2, "blob retrieval");
+	VTM_TEST_CHECK(vtm_blob_size(blob1) == vtm_blob_size(blob2), "blob size check");
+	VTM_TEST_CHECK(strcmp(blob2, "TESTSTRING") == 0, "blob content comparison");
+
+	vtm_dataset_free(ds);
+	VTM_TEST_PASSED("dataset free");
+}
+
 extern void test_vtm_core_dataset(void)
 {
 	VTM_TEST_LABEL("dataset");
 	test_dataset();
+	test_dataset_blob();
 }

@@ -172,6 +172,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\blob.c" />
     <ClCompile Include="$(VentaniumRoot)\src\vtm\core\buffer.c" />
     <ClCompile Include="$(VentaniumRoot)\src\vtm\core\convert.c" />
     <ClCompile Include="$(VentaniumRoot)\src\vtm\core\dataset.c" />
@@ -251,6 +252,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(VentaniumRoot)\src\vtm\core\api.h" />
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\blob.h" />
     <ClInclude Include="$(VentaniumRoot)\src\vtm\core\buffer.h" />
     <ClInclude Include="$(VentaniumRoot)\src\vtm\core\convert.h" />
     <ClInclude Include="$(VentaniumRoot)\src\vtm\core\dataset.h" />

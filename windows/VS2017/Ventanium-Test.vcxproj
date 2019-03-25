@@ -221,6 +221,7 @@
   <ItemGroup>
     <ClCompile Include="$(VentaniumRoot)test\test.c" />
     <ClCompile Include="$(VentaniumRoot)test\vtf.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_blob.c" />
     <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_dataset.c" />
     <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_elem.c" />
     <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_format.c" />

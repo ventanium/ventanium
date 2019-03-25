@@ -26,6 +26,9 @@
     <ClCompile Include="$(VentaniumRoot)test\vtf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_blob.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(VentaniumRoot)test\vtm\core\test_dataset.c">
       <Filter>Source Files</Filter>
     </ClCompile>

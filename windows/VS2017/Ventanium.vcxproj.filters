@@ -15,6 +15,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(VentaniumRoot)\src\vtm\core\blop.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="$(VentaniumRoot)\src\vtm\core\buffer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -246,6 +249,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(VentaniumRoot)\src\vtm\core\api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(VentaniumRoot)\src\vtm\core\blob.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="$(VentaniumRoot)\src\vtm\core\buffer.h">

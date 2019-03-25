@@ -245,9 +245,18 @@ void vtm_dataset_set_variant(vtm_dataset *ds, const char *name, struct vtm_varia
 	node->free_val_ptr = false;
 	node->next = NULL;
 
-	if (var->type == VTM_ELEM_STRING) {
-		node->value.data.elem_pointer = vtm_str_copy(var->data.elem_pointer);
-		node->free_val_ptr = true;
+	switch (var->type) {
+		case VTM_ELEM_STRING:
+			node->value.data.elem_pointer = vtm_str_copy(var->data.elem_pointer);
+			node->free_val_ptr = true;
+			break;
+
+		case VTM_ELEM_BLOB:
+			node->free_val_ptr = true;
+			break;
+
+		default:
+			break;
 	}
 
 	vtm_dataset_put_node(ds, node);

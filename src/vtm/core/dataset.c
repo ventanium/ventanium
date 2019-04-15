@@ -472,6 +472,11 @@ void vtm_dataset_set_string(vtm_dataset *ds, const char *name, const char *val)
 	VTM_DATASET_SETX(VTM_V_STR, vtm_str_copy(val), true);
 }
 
+void vtm_dataset_set_static_string(vtm_dataset *ds, const char *name, const char *val)
+{
+	VTM_DATASET_SETX(VTM_V_STR, (char*) val, false);
+}
+
 const void* vtm_dataset_get_blob(vtm_dataset *ds, const char *name)
 {
 	VTM_DATASET_GET(blob, NULL);
@@ -480,6 +485,11 @@ const void* vtm_dataset_get_blob(vtm_dataset *ds, const char *name)
 void vtm_dataset_set_blob(vtm_dataset *ds, const char *name, const void *val)
 {
 	VTM_DATASET_SETX(VTM_V_BLOB, (void*) val, true);
+}
+
+void vtm_dataset_set_static_blob(vtm_dataset *ds, const char *name, const void *val)
+{
+	VTM_DATASET_SETX(VTM_V_BLOB, (void*) val, false);
 }
 
 void* vtm_dataset_get_pointer(vtm_dataset *ds, const char *name)

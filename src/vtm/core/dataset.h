@@ -191,9 +191,11 @@ VTM_API void vtm_dataset_set_double(vtm_dataset *ds, const char *name, double va
 
 VTM_API const char* vtm_dataset_get_string(vtm_dataset *ds, const char *name);
 VTM_API void vtm_dataset_set_string(vtm_dataset *ds, const char *name, const char *val);
+VTM_API void vtm_dataset_set_static_string(vtm_dataset *ds, const char *name, const char *val);
 
 VTM_API const void* vtm_dataset_get_blob(vtm_dataset *ds, const char *name);
 VTM_API void vtm_dataset_set_blob(vtm_dataset *ds, const char *name, const void *val);
+VTM_API void vtm_dataset_set_static_blob(vtm_dataset *ds, const char *name, const void *val);
 
 VTM_API void* vtm_dataset_get_pointer(vtm_dataset *ds, const char *name);
 VTM_API void vtm_dataset_set_pointer(vtm_dataset *ds, const char *name, void *val);

@@ -256,13 +256,13 @@ static int vtm_sqlite_stmt_bind_variant(sqlite3_stmt *stmt, int index, struct vt
 
 		case VTM_ELEM_STRING:
 			rc = sqlite3_bind_text(stmt, index, vtm_variant_as_str(var),
-				-1, SQLITE_STATIC);
+				-1, SQLITE_TRANSIENT);
 			break;
 
 		case VTM_ELEM_BLOB:
 			blob = vtm_variant_as_blob(var);
 			rc = sqlite3_bind_blob(stmt, index, blob, vtm_blob_size(blob),
-				SQLITE_STATIC);
+				SQLITE_TRANSIENT);
 			break;
 
 		default:

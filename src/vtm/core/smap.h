@@ -170,22 +170,21 @@
 		OUT_REMOVED = false;                                     \
 		index = VTM_SMAP_INDEX(NAME, KEY_PTR);                   \
 		if (NAME.buckets[index] != NULL) {                       \
-			NODE_TYPE *cur;                                      \
-			NODE_TYPE **prev;                                    \
+			NODE_TYPE *cur, *prev;                               \
 			prev = NULL;                                         \
 			cur = NAME.buckets[index];                           \
 			while (cur) {                                        \
 				if (NAME.fn_key_cmp(&(cur->key.data),            \
 					 &((KEY_PTR)->data))) {                      \
 					if (prev)                                    \
-						(*prev)->next = cur->next;               \
+						prev->next = cur->next;                  \
 					else                                         \
 						NAME.buckets[index] = cur->next;         \
 					VTM_SMAP_FREE_NODE(NAME, cur);               \
 					OUT_REMOVED = true;                          \
 					break;                                       \
 				}                                                \
-				prev = &cur;                                     \
+				prev = cur;                                      \
 				cur = cur->next;                                 \
 			}                                                    \
 		}                                                        \

@@ -74,9 +74,26 @@ static void test_free_func(void)
 	VTM_TEST_PASSED("map free");
 }
 
+static void test_string_key(void)
+{
+	vtm_map *map;
+
+	map = vtm_map_new(VTM_ELEM_STRING, VTM_ELEM_INT, 8);
+	VTM_TEST_ASSERT(map != NULL, "map allocated");
+
+	vtm_map_put_va(map, "KEY", 1024);
+	vtm_map_remove_va(map, "KEY");
+
+	VTM_TEST_CHECK(vtm_map_size(map) == 0, "map size check");
+
+	vtm_map_free(map);
+	VTM_TEST_PASSED("map free");
+}
+
 extern void test_vtm_core_map(void)
 {
 	VTM_TEST_LABEL("map");
 	test_map();
 	test_free_func();
+	test_string_key();
 }

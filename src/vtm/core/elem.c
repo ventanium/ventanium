@@ -129,7 +129,7 @@ void vtm_elem_parse(enum vtm_elem_type type, union vtm_elem *dst, va_list *ap)
 			break;
 
 		case VTM_ELEM_STRING:
-			dst->elem_pointer = vtm_str_copy(va_arg(*ap, char*));
+			dst->elem_pointer = va_arg(*ap, char*);
 			break;
 
 		case VTM_ELEM_BLOB:

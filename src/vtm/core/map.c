@@ -335,6 +335,15 @@ static void vtm_map_parse_key(vtm_map *map, va_list *ap, struct vtm_map_key *key
 static void vtm_map_parse_value(vtm_map *map, va_list *ap, union vtm_elem *dst)
 {
 	vtm_elem_parse(map->valuetype, dst, ap);
+
+	switch (map->valuetype) {
+		case VTM_ELEM_STRING:
+			dst->elem_pointer = vtm_str_copy(dst->elem_pointer);
+			break;
+
+		default:
+			break;
+	}
 }
 
 static struct vtm_map_node** vtm_map_get_node_pos(vtm_map *map, struct vtm_map_key *key)

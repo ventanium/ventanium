@@ -13,6 +13,14 @@
 #include <vtm/core/hash.h>
 #include <vtm/core/string.h>
 
+#define VTM_DATASET_CHECK_EMPTY(DS, NAME, VAL)                 \
+	do {                                                       \
+		if (!(VAL)) {                                          \
+			vtm_dataset_remove(DS, NAME);                      \
+			return;                                            \
+		}                                                      \
+	} while (0)
+
 #define VTM_DATASET_GET(RTYPE, NVL)                            \
 	do {                                                       \
 		struct vtm_variant *var;                               \
@@ -469,11 +477,13 @@ const char* vtm_dataset_get_string(vtm_dataset *ds, const char *name)
 
 void vtm_dataset_set_string(vtm_dataset *ds, const char *name, const char *val)
 {
+	VTM_DATASET_CHECK_EMPTY(ds, name, val);
 	VTM_DATASET_SETX(VTM_V_STR, vtm_str_copy(val), true);
 }
 
 void vtm_dataset_set_static_string(vtm_dataset *ds, const char *name, const char *val)
 {
+	VTM_DATASET_CHECK_EMPTY(ds, name, val);
 	VTM_DATASET_SETX(VTM_V_STR, (char*) val, false);
 }
 
@@ -484,11 +494,13 @@ const void* vtm_dataset_get_blob(vtm_dataset *ds, const char *name)
 
 void vtm_dataset_set_blob(vtm_dataset *ds, const char *name, const void *val)
 {
+	VTM_DATASET_CHECK_EMPTY(ds, name, val);
 	VTM_DATASET_SETX(VTM_V_BLOB, (void*) val, true);
 }
 
 void vtm_dataset_set_static_blob(vtm_dataset *ds, const char *name, const void *val)
 {
+	VTM_DATASET_CHECK_EMPTY(ds, name, val);
 	VTM_DATASET_SETX(VTM_V_BLOB, (void*) val, false);
 }
 
@@ -499,5 +511,6 @@ void* vtm_dataset_get_pointer(vtm_dataset *ds, const char *name)
 
 void vtm_dataset_set_pointer(vtm_dataset *ds, const char *name, void *val)
 {
+	VTM_DATASET_CHECK_EMPTY(ds, name, val);
 	VTM_DATASET_SET(VTM_V_PTR);
 }

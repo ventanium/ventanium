@@ -209,7 +209,7 @@ static int vtm_socket_tls_accept(struct vtm_socket *sock, struct vtm_socket **cl
 	SSL_set_fd(ssl, sockfd);
 	rc = SSL_accept(ssl);
 	if (rc == 0) {
-		rc = VTM_E_IO_CLOSED;
+		rc = VTM_E_IO_CANCELED;
 		goto err_ssl;
 	}
 	else if (rc < 0) {
@@ -439,6 +439,12 @@ static int vtm_socket_tls_check_error(struct vtm_socket *sock, SSL *ssl, int cod
 		case SSL_ERROR_ZERO_RETURN:
 			state = VTM_SOCK_STAT_CLOSED;
 			rc = VTM_E_IO_CLOSED;
+			break;
+
+		case SSL_ERROR_SSL:
+			state = VTM_SOCK_STAT_ERR;
+			rc = VTM_E_IO_PROTOCOL;
+			vtm_socket_tls_save_error(rc);
 			break;
 
 		default:

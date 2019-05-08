@@ -29,12 +29,11 @@ extern "C" {
 #define VTM_SOCK_STAT_WRITE_AGAIN     (1 <<  3)
 #define VTM_SOCK_STAT_READ_LOCKED     (1 <<  4)
 #define VTM_SOCK_STAT_WRITE_LOCKED    (1 <<  5)
-#define VTM_SOCK_STAT_FREE_WANTED     (1 <<  6)
-#define VTM_SOCK_STAT_FREE_ON_UNREF   (1 <<  7)
-#define VTM_SOCK_STAT_NONBLOCKING     (1 <<  8)
-#define VTM_SOCK_STAT_NBL_READ        (1 <<  9)  /**< Non-blocking read */
-#define VTM_SOCK_STAT_NBL_WRITE       (1 << 10)  /**< Non-blocking write */
-#define VTM_SOCK_STAT_NBL_AUTO        (1 << 11)  /**< Non-blocking read or write, automatically switched */
+#define VTM_SOCK_STAT_FREE_ON_UNREF   (1 <<  6)
+#define VTM_SOCK_STAT_NONBLOCKING     (1 <<  7)
+#define VTM_SOCK_STAT_NBL_READ        (1 <<  8)  /**< Non-blocking read */
+#define VTM_SOCK_STAT_NBL_WRITE       (1 <<  9)  /**< Non-blocking write */
+#define VTM_SOCK_STAT_NBL_AUTO        (1 << 10)  /**< Non-blocking read or write, automatically switched */
 
 /* shutdown */
 #define VTM_SOCK_SHUT_RD                1  /**< Shutdown read-side */

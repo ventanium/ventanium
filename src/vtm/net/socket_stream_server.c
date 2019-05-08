@@ -979,7 +979,6 @@ static VTM_INLINE void vtm_socket_stream_srv_sock_free(vtm_socket_stream_srv *sr
 		return;
 	}
 
-	vtm_socket_set_state(sock, VTM_SOCK_STAT_FREE_WANTED);
 	vtm_mutex_lock(srv->events_mtx);
 	vtm_list_add_va(srv->release_socks, sock);
 	vtm_mutex_unlock(srv->events_mtx);

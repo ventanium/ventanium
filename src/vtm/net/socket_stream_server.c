@@ -370,14 +370,13 @@ finish:
 static int vtm_socket_stream_srv_handle_direct(vtm_socket_stream_srv *srv, struct vtm_socket_event *events, size_t num_events, vtm_dataset *wd)
 {
 	int rc;
-	size_t i, count;
+	size_t i;
 	vtm_socket *sock;
 	struct vtm_socket_stream_srv_entry *event;
 
 	/* handle relay events */
-	count = vtm_list_size(srv->relay_events);
-	for (i=0; i < count; i++) {
-		event = vtm_list_get_pointer(srv->relay_events, i);
+	while (vtm_list_size(srv->relay_events) > 0) {
+		event = vtm_list_get_pointer(srv->relay_events, 0);
 		switch (event->type) {
 			case VTM_SOCK_SRV_CLOSED:
 				vtm_socket_set_state(event->sock, VTM_SOCK_STAT_CLOSED);
@@ -391,9 +390,9 @@ static int vtm_socket_stream_srv_handle_direct(vtm_socket_stream_srv *srv, struc
 			default:
 				break;
 		}
+		vtm_list_remove(srv->relay_events, 0);
 		free(event);
 	}
-	vtm_list_clear(srv->relay_events);
 
 	/* handle events from listener */
 	for (i=0; i < num_events; i++) {
@@ -445,12 +444,11 @@ static int vtm_socket_stream_srv_handle_queued(vtm_socket_stream_srv *srv, struc
 	vtm_list_clear(srv->release_socks);
 
 	/* process relay events */
-	count = vtm_list_size(srv->relay_events);
-	for (i=0; i < count; i++) {
-		event = vtm_list_get_pointer(srv->relay_events, i);
+	while (vtm_list_size(srv->relay_events) > 0) {
+		event = vtm_list_get_pointer(srv->relay_events, 0);
+		vtm_list_remove(srv->relay_events, 0);
 		VTM_SQUEUE_ADD(srv->events, event);
 	}
-	vtm_list_clear(srv->relay_events);
 
 	/* process events from listener */
 	for (i=0; i < num_events; i++) {

@@ -83,7 +83,7 @@ static void vtm_socket_stream_srv_unlock_cons(vtm_socket_stream_srv *srv);
 static void vtm_socket_stream_srv_free_sockets(vtm_socket_stream_srv *srv);
 
 /* socket functions */
-static void vtm_socket_stream_srv_sock_event(vtm_socket_stream_srv *srv, vtm_dataset *wd, struct vtm_socket_stream_srv_entry *event);
+static bool vtm_socket_stream_srv_sock_event(vtm_socket_stream_srv *srv, vtm_dataset *wd, struct vtm_socket_stream_srv_entry *event);
 static int  vtm_socket_stream_srv_sock_check(vtm_socket_stream_srv *srv, vtm_dataset *wd, vtm_socket *sock, bool rearm);
 static void vtm_socket_stream_srv_sock_accepted(vtm_socket_stream_srv *srv, vtm_dataset *wd, vtm_socket *sock);
 static void vtm_socket_stream_srv_sock_can_read(vtm_socket_stream_srv *srv, vtm_dataset *wd, vtm_socket *sock);
@@ -748,6 +748,7 @@ static int vtm_socket_stream_srv_worker_run(void *arg)
 	vtm_dataset *wd;
 	struct vtm_socket_stream_srv_entry *event;
 	vtm_socket_stream_srv *srv;
+	bool event_processed;
 
 	srv = arg;
 	wd = vtm_dataset_new();
@@ -773,9 +774,11 @@ static int vtm_socket_stream_srv_worker_run(void *arg)
 		VTM_SQUEUE_POLL(srv->events, event);
 		vtm_mutex_unlock(srv->events_mtx);
 
-		vtm_socket_stream_srv_sock_event(srv, wd, event);
+		event_processed = vtm_socket_stream_srv_sock_event(srv, wd, event);
 		vtm_socket_unref(event->sock);
-		free(event);
+
+		if (event_processed)
+			free(event);
 	}
 
 finish:
@@ -793,8 +796,9 @@ finish:
 		if (!event)
 			break;
 
-		vtm_socket_stream_srv_sock_event(srv, wd, event);
-		free(event);
+		event_processed = vtm_socket_stream_srv_sock_event(srv, wd, event);
+		if (event_processed)
+			free(event);
 	}
 
 	if (srv->cbs.worker_end)
@@ -805,7 +809,7 @@ finish:
 	return VTM_OK;
 }
 
-static VTM_INLINE void vtm_socket_stream_srv_sock_event(vtm_socket_stream_srv *srv, vtm_dataset *wd, struct vtm_socket_stream_srv_entry *event)
+static VTM_INLINE bool vtm_socket_stream_srv_sock_event(vtm_socket_stream_srv *srv, vtm_dataset *wd, struct vtm_socket_stream_srv_entry *event)
 {
 	int rc;
 
@@ -822,7 +826,7 @@ static VTM_INLINE void vtm_socket_stream_srv_sock_event(vtm_socket_stream_srv *s
 				VTM_SOCK_STAT_READ_LOCKED | VTM_SOCK_STAT_WRITE_LOCKED);
 			if (rc != VTM_OK) {
 				vtm_socket_stream_srv_add_event(srv, event);
-				return;
+				return false;
 			}
 			vtm_socket_stream_srv_sock_closed(srv, wd, event->sock);
 			vtm_socket_stream_srv_sock_unlock(event->sock,
@@ -834,7 +838,7 @@ static VTM_INLINE void vtm_socket_stream_srv_sock_event(vtm_socket_stream_srv *s
 				VTM_SOCK_STAT_READ_LOCKED | VTM_SOCK_STAT_WRITE_LOCKED);
 			if (rc != VTM_OK) {
 				vtm_socket_stream_srv_add_event(srv, event);
-				return;
+				return false;
 			}
 			vtm_socket_stream_srv_sock_error(srv, wd, event->sock);
 			vtm_socket_stream_srv_sock_unlock(event->sock,
@@ -843,24 +847,26 @@ static VTM_INLINE void vtm_socket_stream_srv_sock_event(vtm_socket_stream_srv *s
 
 		case VTM_SOCK_SRV_READ:
 			if (vtm_socket_get_state(event->sock) & VTM_SOCK_STAT_CLOSED)
-				return;
+				return true;
 			rc = vtm_socket_stream_srv_sock_trylock(event->sock, VTM_SOCK_STAT_READ_LOCKED);
 			if (rc != VTM_OK)
-				return;
+				return true;
 			vtm_socket_stream_srv_sock_can_read(srv, wd, event->sock);
 			vtm_socket_stream_srv_sock_unlock(event->sock, VTM_SOCK_STAT_READ_LOCKED);
 			break;
 
 		case VTM_SOCK_SRV_WRITE:
 			if (vtm_socket_get_state(event->sock) & VTM_SOCK_STAT_CLOSED)
-				return;
+				return true;
 			rc = vtm_socket_stream_srv_sock_trylock(event->sock, VTM_SOCK_STAT_WRITE_LOCKED);
 			if (rc != VTM_OK)
-				return;
+				return true;
 			vtm_socket_stream_srv_sock_can_write(srv, wd, event->sock);
 			vtm_socket_stream_srv_sock_unlock(event->sock, VTM_SOCK_STAT_WRITE_LOCKED);
 			break;
 	}
+
+	return true;
 }
 
 static VTM_INLINE int vtm_socket_stream_srv_sock_check(vtm_socket_stream_srv *srv, vtm_dataset *wd, vtm_socket *sock, bool rearm)

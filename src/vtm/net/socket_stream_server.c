@@ -440,6 +440,7 @@ static int vtm_socket_stream_srv_handle_queued(vtm_socket_stream_srv *srv, struc
 	for (i=0; i < count; i++) {
 		sock = vtm_list_get_pointer(srv->release_socks, i);
 		vtm_socket_enable_free_on_unref(sock);
+		vtm_socket_unref(sock);
 	}
 	vtm_list_clear(srv->release_socks);
 
@@ -984,6 +985,8 @@ static VTM_INLINE void vtm_socket_stream_srv_sock_free(vtm_socket_stream_srv *sr
 		vtm_socket_free(sock);
 		return;
 	}
+
+	vtm_socket_ref(sock);
 
 	vtm_mutex_lock(srv->events_mtx);
 	vtm_list_add_va(srv->release_socks, sock);

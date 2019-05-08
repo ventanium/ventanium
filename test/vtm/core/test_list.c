@@ -66,6 +66,10 @@ static void test_free_func(void)
 		vtm_list_add_va(list, val);
 	}
 
+	val = vtm_list_get_pointer(list, 0);
+	VTM_TEST_ASSERT(val != NULL, "list get pointer");
+	free(val);
+
 	rc = vtm_list_remove(list, 0);
 	VTM_TEST_CHECK(rc == VTM_OK, "list removal");
 

@@ -220,17 +220,11 @@ int vtm_list_add_va(vtm_list *li, ...)
 
 int vtm_list_remove(vtm_list *li, size_t index)
 {
-	void *p;
 	char *src;
 	char *dst;
 
 	if (index >= li->used)
 		return VTM_E_OUT_OF_RANGE;
-
-	if (li->fn_free != NULL) {
-		p = vtm_list_get_pointer(li, index);
-		free(p);
-	}
 
 	dst = ((char*) li->array) + index * li->elem_size;
 	src = dst + li->elem_size;

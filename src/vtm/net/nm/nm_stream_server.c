@@ -256,5 +256,4 @@ static void vtm_nm_stream_srv_sock_can_write(vtm_socket_stream_srv *sock_srv, vt
 
 static void vtm_nm_stream_srv_sock_error(vtm_socket_stream_srv *sock_srv, vtm_dataset *wd, vtm_socket *client)
 {
-	vtm_socket_close(client);
 }

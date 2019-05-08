@@ -118,3 +118,14 @@ static int vtm_socket_con_write_internal(struct vtm_socket_con *con)
 
 	return rc;
 }
+
+int vtm_socket_con_close(struct vtm_socket_con *con)
+{
+	int rc;
+
+	rc = vtm_socket_close(con->sock);
+	if (rc == VTM_OK)
+		vtm_socket_update_srv(con->sock);
+
+	return rc;
+}

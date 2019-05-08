@@ -78,7 +78,7 @@ int vtm_nm_stream_con_send(vtm_nm_stream_con *con, vtm_dataset *msg)
 
 void vtm_nm_stream_con_close(vtm_nm_stream_con *con)
 {
-	vtm_socket_close(con->sock_con.sock);
+	vtm_socket_con_close(&con->sock_con);
 }
 
 enum vtm_net_recv_stat vtm_nm_stream_con_read(vtm_nm_stream_con *con)

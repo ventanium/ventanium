@@ -19,6 +19,10 @@
 #include <vtm/util/spinlock.h>
 #include <vtm/util/thread.h>
 
+#define VTM_STREAM_SRV_WORKER_GET_SOCKET()      worker_current_socket
+#define VTM_STREAM_SRV_WORKER_SET_SOCKET(SOCK)  worker_current_socket = (SOCK)
+#define VTM_STREAM_SRV_WORKER_CLEAR_SOCKET()    worker_current_socket = NULL
+
 enum vtm_socket_stream_srv_entry_type
 {
 	VTM_SOCK_SRV_ACCEPTED,
@@ -61,6 +65,8 @@ struct vtm_socket_stream_srv
 	vtm_mutex *cons_mtx;
 };
 
+static VTM_THREAD_LOCAL vtm_socket *worker_current_socket;
+
 /* forward declaration */
 static int  vtm_socket_stream_srv_create_socket(vtm_socket_stream_srv *srv, struct vtm_socket_stream_srv_opts *opts);
 static int  vtm_socket_stream_srv_prepare_socket(vtm_socket_stream_srv *srv, struct vtm_socket_stream_srv_opts *opts);
@@ -78,6 +84,7 @@ static void vtm_socket_stream_srv_workers_interrupt(vtm_socket_stream_srv *srv);
 static void vtm_socket_stream_srv_workers_join(vtm_socket_stream_srv *srv);
 static void vtm_socket_stream_srv_workers_free(vtm_socket_stream_srv *srv);
 static int  vtm_socket_stream_srv_worker_run(void *arg);
+static void vtm_socket_stream_srv_worker_event(vtm_socket_stream_srv *srv, vtm_dataset *wd, struct vtm_socket_stream_srv_entry *event);
 static void vtm_socket_stream_srv_lock_cons(vtm_socket_stream_srv *srv);
 static void vtm_socket_stream_srv_unlock_cons(vtm_socket_stream_srv *srv);
 static void vtm_socket_stream_srv_free_sockets(vtm_socket_stream_srv *srv);
@@ -377,6 +384,7 @@ static int vtm_socket_stream_srv_handle_direct(vtm_socket_stream_srv *srv, struc
 	/* handle relay events */
 	while (vtm_list_size(srv->relay_events) > 0) {
 		event = vtm_list_get_pointer(srv->relay_events, 0);
+		VTM_STREAM_SRV_WORKER_SET_SOCKET(event->sock);
 		switch (event->type) {
 			case VTM_SOCK_SRV_CLOSED:
 				vtm_socket_set_state(event->sock, VTM_SOCK_STAT_CLOSED);
@@ -390,6 +398,7 @@ static int vtm_socket_stream_srv_handle_direct(vtm_socket_stream_srv *srv, struc
 			default:
 				break;
 		}
+		VTM_STREAM_SRV_WORKER_CLEAR_SOCKET();
 		vtm_list_remove(srv->relay_events, 0);
 		free(event);
 	}
@@ -397,6 +406,7 @@ static int vtm_socket_stream_srv_handle_direct(vtm_socket_stream_srv *srv, struc
 	/* handle events from listener */
 	for (i=0; i < num_events; i++) {
 		sock = events[i].sock;
+		VTM_STREAM_SRV_WORKER_SET_SOCKET(sock);
 		if (events[i].events & VTM_SOCK_EVT_CLOSED) {
 			vtm_socket_set_state(sock, VTM_SOCK_STAT_CLOSED);
 			vtm_socket_stream_srv_sock_closed(srv, wd, sock);
@@ -408,8 +418,10 @@ static int vtm_socket_stream_srv_handle_direct(vtm_socket_stream_srv *srv, struc
 			if (events[i].events & VTM_SOCK_EVT_READ) {
 				if (sock == srv->socket) {
 					rc = vtm_socket_stream_srv_accept(srv, wd, true);
-					if (rc != VTM_OK)
+					if (rc != VTM_OK) {
+						VTM_STREAM_SRV_WORKER_CLEAR_SOCKET();
 						return rc;
+					}
 					continue;
 				}
 				vtm_socket_stream_srv_sock_can_read(srv, wd, sock);
@@ -419,6 +431,7 @@ static int vtm_socket_stream_srv_handle_direct(vtm_socket_stream_srv *srv, struc
 			}
 		}
 	}
+	VTM_STREAM_SRV_WORKER_CLEAR_SOCKET();
 
 	return VTM_OK;
 }
@@ -749,7 +762,6 @@ static int vtm_socket_stream_srv_worker_run(void *arg)
 	vtm_dataset *wd;
 	struct vtm_socket_stream_srv_entry *event;
 	vtm_socket_stream_srv *srv;
-	bool event_processed;
 
 	srv = arg;
 	wd = vtm_dataset_new();
@@ -775,11 +787,7 @@ static int vtm_socket_stream_srv_worker_run(void *arg)
 		VTM_SQUEUE_POLL(srv->events, event);
 		vtm_mutex_unlock(srv->events_mtx);
 
-		event_processed = vtm_socket_stream_srv_sock_event(srv, wd, event);
-		vtm_socket_unref(event->sock);
-
-		if (event_processed)
-			free(event);
+		vtm_socket_stream_srv_worker_event(srv, wd, event);
 	}
 
 finish:
@@ -797,9 +805,7 @@ finish:
 		if (!event)
 			break;
 
-		event_processed = vtm_socket_stream_srv_sock_event(srv, wd, event);
-		if (event_processed)
-			free(event);
+		vtm_socket_stream_srv_worker_event(srv, wd, event);
 	}
 
 	if (srv->cbs.worker_end)
@@ -808,6 +814,19 @@ finish:
 	vtm_dataset_free(wd);
 
 	return VTM_OK;
+}
+
+static VTM_INLINE void vtm_socket_stream_srv_worker_event(vtm_socket_stream_srv *srv, vtm_dataset *wd, struct vtm_socket_stream_srv_entry *event)
+{
+	bool processed;
+
+	VTM_STREAM_SRV_WORKER_SET_SOCKET(event->sock);
+	processed = vtm_socket_stream_srv_sock_event(srv, wd, event);
+	VTM_STREAM_SRV_WORKER_CLEAR_SOCKET();
+
+	vtm_socket_unref(event->sock);
+	if (processed)
+		free(event);
 }
 
 static VTM_INLINE bool vtm_socket_stream_srv_sock_event(vtm_socket_stream_srv *srv, vtm_dataset *wd, struct vtm_socket_stream_srv_entry *event)
@@ -958,9 +977,14 @@ static VTM_INLINE void vtm_socket_stream_srv_sock_can_write(vtm_socket_stream_sr
 
 static VTM_INLINE void vtm_socket_stream_srv_sock_closed(vtm_socket_stream_srv *srv, vtm_dataset *wd, vtm_socket *sock)
 {
+	bool removed;
+
 	vtm_socket_stream_srv_lock_cons(srv);
-	vtm_map_remove_va(srv->cons, sock);
+	removed = vtm_map_remove_va(srv->cons, sock);
 	vtm_socket_stream_srv_unlock_cons(srv);
+
+	if (!removed)
+		return;
 
 	vtm_socket_listener_remove(srv->listener, sock);
 
@@ -1004,6 +1028,9 @@ static void vtm_socket_stream_srv_sock_init_cbs(vtm_socket_stream_srv *srv, vtm_
 static int vtm_socket_stream_srv_sock_cb_update(void *stream_srv, vtm_socket *sock)
 {
 	vtm_socket_stream_srv *srv;
+
+	if (VTM_STREAM_SRV_WORKER_GET_SOCKET() == sock)
+		return VTM_OK;
 
 	srv = stream_srv;
 

@@ -117,7 +117,7 @@ VTM_API void vtm_socket_con_write_unlock(struct vtm_socket_con *con);
 VTM_API int vtm_socket_con_write_start(struct vtm_socket_con *con);
 
 /**
- * Sends the next chunk of data from the output buffer
+ * Sends the next chunk of data from the output buffer.
  *
  * @param con the connection that should send data
  * @return VTM_OK if all remaining data was sent
@@ -126,6 +126,15 @@ VTM_API int vtm_socket_con_write_start(struct vtm_socket_con *con);
  * @return VTM_E_IO_UNKNOWN or VTM_ERROR if an error occured
  */
 VTM_API int vtm_socket_con_write(struct vtm_socket_con *con);
+
+/**
+ * Closes the underlying socket.
+ *
+ * @param con the the connection that should be closed
+ * @return VTM_OK if the socket was closed
+ * @return VTM_E_IO_UNKNOWN or VTM_ERROR if an error occured
+ */
+VTM_API int vtm_socket_con_close(struct vtm_socket_con *con);
 
 #ifdef __cplusplus
 }

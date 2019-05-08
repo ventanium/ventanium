@@ -9,6 +9,9 @@
 #include <vtm/core/lang.h>
 #include <vtm/net/socket_intl.h>
 
+#define VTM_SOCKET_IS_CLOSED(SOCK)      \
+	vtm_flag_is_set((SOCK)->state, VTM_SOCK_STAT_CLOSED)
+
 int vtm_socket_base_init(struct vtm_socket *sock)
 {
 	sock->state = VTM_SOCK_STAT_DEFAULT;
@@ -73,7 +76,10 @@ int vtm_socket_bind(vtm_socket *sock, const char *addr, unsigned int port)
 	int rc;
 
 	vtm_socket_lock(sock);
-	rc = sock->vtable->vtm_socket_bind(sock, addr, port);
+	if (VTM_SOCKET_IS_CLOSED(sock))
+		rc = VTM_E_IO_CLOSED;
+	else
+		rc = sock->vtable->vtm_socket_bind(sock, addr, port);
 	vtm_socket_unlock(sock);
 
 	return rc;
@@ -84,7 +90,10 @@ int vtm_socket_listen(vtm_socket *sock, unsigned int backlog)
 	int rc;
 
 	vtm_socket_lock(sock);
-	rc = sock->vtable->vtm_socket_listen(sock, backlog);
+	if (VTM_SOCKET_IS_CLOSED(sock))
+		rc = VTM_E_IO_CLOSED;
+	else
+		rc = sock->vtable->vtm_socket_listen(sock, backlog);
 	vtm_socket_unlock(sock);
 
 	return rc;
@@ -95,8 +104,13 @@ int vtm_socket_accept(vtm_socket *sock, vtm_socket **client)
 	int rc;
 
 	vtm_socket_lock(sock);
-	vtm_flag_unset(sock->state, VTM_SOCK_STAT_READ_AGAIN);
-	rc = sock->vtable->vtm_socket_accept(sock, client);
+	if (VTM_SOCKET_IS_CLOSED(sock)) {
+		rc = VTM_E_IO_CLOSED;
+	}
+	else {
+		vtm_flag_unset(sock->state, VTM_SOCK_STAT_READ_AGAIN);
+		rc = sock->vtable->vtm_socket_accept(sock, client);
+	}
 	vtm_socket_unlock(sock);
 
 	return rc;
@@ -107,8 +121,13 @@ int vtm_socket_connect(vtm_socket *sock, const char *host, unsigned int port)
 	int rc;
 
 	vtm_socket_lock(sock);
-	vtm_flag_unset(sock->state, VTM_SOCK_STAT_READ_AGAIN);
-	rc = sock->vtable->vtm_socket_connect(sock, host, port);
+	if (VTM_SOCKET_IS_CLOSED(sock)) {
+		rc = VTM_E_IO_CLOSED;
+	}
+	else {
+		vtm_flag_unset(sock->state, VTM_SOCK_STAT_READ_AGAIN);
+		rc = sock->vtable->vtm_socket_connect(sock, host, port);
+	}
 	vtm_socket_unlock(sock);
 
 	return rc;
@@ -119,7 +138,10 @@ int vtm_socket_shutdown(vtm_socket *sock, int dir)
 	int rc;
 
 	vtm_socket_lock(sock);
-	rc = sock->vtable->vtm_socket_shutdown(sock, dir);
+	if (VTM_SOCKET_IS_CLOSED(sock))
+		rc = VTM_E_IO_CLOSED;
+	else
+		rc = sock->vtable->vtm_socket_shutdown(sock, dir);
 	vtm_socket_unlock(sock);
 
 	return rc;
@@ -130,9 +152,14 @@ int vtm_socket_close(vtm_socket *sock)
 	int rc;
 
 	vtm_socket_lock(sock);
-	rc = sock->vtable->vtm_socket_close(sock);
-	if (rc == VTM_OK)
-		vtm_flag_set(sock->state, VTM_SOCK_STAT_CLOSED);
+	if (VTM_SOCKET_IS_CLOSED(sock)) {
+		rc = VTM_OK;
+	}
+	else {
+		rc = sock->vtable->vtm_socket_close(sock);
+		if (rc == VTM_OK)
+			vtm_flag_set(sock->state, VTM_SOCK_STAT_CLOSED);
+	}
 	vtm_socket_unlock(sock);
 
 	return rc;
@@ -143,6 +170,11 @@ int vtm_socket_write(vtm_socket *sock, const void *src, size_t len, size_t *out_
 	int rc;
 
 	vtm_socket_lock(sock);
+	if (VTM_SOCKET_IS_CLOSED(sock)) {
+		rc = VTM_E_IO_CLOSED;
+		goto unlock;
+	}
+
 	vtm_flag_unset(sock->state, VTM_SOCK_STAT_WRITE_AGAIN);
 	rc = sock->vtable->vtm_socket_write(sock, src, len, out_written);
 
@@ -157,6 +189,8 @@ int vtm_socket_write(vtm_socket *sock, const void *src, size_t len, size_t *out_
 			sock->state |= VTM_SOCK_STAT_NBL_READ;
 		}
 	}
+
+unlock:
 	vtm_socket_unlock(sock);
 
 	return rc;
@@ -167,8 +201,13 @@ int vtm_socket_read(vtm_socket *sock, void *buf, size_t len, size_t *out_read)
 	int rc;
 
 	vtm_socket_lock(sock);
-	vtm_flag_unset(sock->state, VTM_SOCK_STAT_READ_AGAIN);
-	rc = sock->vtable->vtm_socket_read(sock, buf, len, out_read);
+	if (VTM_SOCKET_IS_CLOSED(sock)) {
+		rc = VTM_E_IO_CLOSED;
+	}
+	else {
+		vtm_flag_unset(sock->state, VTM_SOCK_STAT_READ_AGAIN);
+		rc = sock->vtable->vtm_socket_read(sock, buf, len, out_read);
+	}
 	vtm_socket_unlock(sock);
 
 	return rc;
@@ -179,7 +218,10 @@ int vtm_socket_dgram_recv(vtm_socket *sock, void *buf, size_t maxlen, size_t *ou
 	int rc;
 
 	vtm_socket_lock(sock);
-	rc = sock->vtable->vtm_socket_dgram_recv(sock, buf, maxlen, out_recv, saddr);
+	if (VTM_SOCKET_IS_CLOSED(sock))
+		rc = VTM_E_IO_CLOSED;
+	else
+		rc = sock->vtable->vtm_socket_dgram_recv(sock, buf, maxlen, out_recv, saddr);
 	vtm_socket_unlock(sock);
 
 	return rc;
@@ -190,7 +232,10 @@ int vtm_socket_dgram_send(vtm_socket *sock, const void *buf, size_t len, size_t 
 	int rc;
 
 	vtm_socket_lock(sock);
-	rc = sock->vtable->vtm_socket_dgram_send(sock, buf, len, out_send, saddr);
+	if (VTM_SOCKET_IS_CLOSED(sock))
+		rc = VTM_E_IO_CLOSED;
+	else
+		rc = sock->vtable->vtm_socket_dgram_send(sock, buf, len, out_send, saddr);
 	vtm_socket_unlock(sock);
 
 	return rc;

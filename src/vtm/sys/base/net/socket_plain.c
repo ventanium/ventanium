@@ -216,17 +216,10 @@ static int vtm_socket_plain_write(struct vtm_socket *sock, const void *src, size
 	while (written != len) {
 		num = send(sock->fd, (const char*) src + written, VTM_SOCKSIZE_CASTED(len - written), 0);
 		if (num < 0) {
-#ifdef VTM_SYS_UNIX
-			if (errno == EAGAIN || errno == EWOULDBLOCK) {
-#elif VTM_SYS_WINDOWS
-			if (WSAGetLastError() == WSAEWOULDBLOCK) {
-#endif
-				rc = VTM_E_IO_AGAIN;
+			rc = vtm_socket_util_error(sock);
+			if (rc == VTM_E_IO_AGAIN)
 				vtm_socket_set_state_intl(sock, VTM_SOCK_STAT_WRITE_AGAIN);
-				goto out;
-			}
-			vtm_socket_set_state_intl(sock, VTM_SOCK_STAT_ERR);
-			return vtm_err_set(VTM_E_IO_UNKNOWN);
+			goto out;
 		}
 		written += num;
 	}

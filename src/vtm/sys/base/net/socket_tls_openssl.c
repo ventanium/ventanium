@@ -376,16 +376,19 @@ static SSL_CTX* vtm_socket_tls_create_ctx(struct vtm_socket_tls_opts *opts)
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
 	method = (opts->is_server) ? TLS_server_method() : TLS_client_method();
 	ctx = SSL_CTX_new(method);
-#elif OPENSSL_VERSION_NUMBER >= 0x10000000L
-	method = (opts->is_server) ? TLSv1_2_server_method() : TLSv1_2_client_method();
-	ctx = SSL_CTX_new(method);
-#else
-	method = (opts->is_server) ? TLSv1_server_method() : TLSv1_client_method();
-	ctx = SSL_CTX_new((SSL_METHOD*) method);
-#endif
-
 	if (!ctx)
 		goto err;
+
+	if (SSL_CTX_set_min_proto_version(ctx, TLS1_VERSION) != 1)
+		goto err;
+#else
+	method = (opts->is_server) ? SSLv23_server_method() : SSLv23_client_method();
+	ctx = SSL_CTX_new((SSL_METHOD*) method);
+	if (!ctx)
+		goto err;
+
+	SSL_CTX_set_options(ctx, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
+#endif
 
 	/* setup certificates */
 	if (opts->is_server) {

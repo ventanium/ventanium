@@ -84,26 +84,48 @@ void vtm_nm_stream_con_close(vtm_nm_stream_con *con)
 enum vtm_net_recv_stat vtm_nm_stream_con_read(vtm_nm_stream_con *con)
 {
 	int rc;
+	enum vtm_net_recv_stat stat;
 	size_t read;
 
-	rc = vtm_buf_ensure(&con->sock_con.recvbuf, 512);
-	if (rc != VTM_OK)
-		return VTM_NET_RECV_STAT_ERROR;
+	while (true) {
+		rc = vtm_buf_ensure(&con->sock_con.recvbuf, 1024);
+		if (rc != VTM_OK)
+			return VTM_NET_RECV_STAT_ERROR;
 
-	rc = vtm_socket_read(con->sock_con.sock, VTM_BUF_PUT_PTR(&con->sock_con.recvbuf),
-		VTM_BUF_PUT_AVAIL_TOTAL(&con->sock_con.recvbuf), &read);
+		rc = vtm_socket_read(con->sock_con.sock,
+			VTM_BUF_PUT_PTR(&con->sock_con.recvbuf),
+			VTM_BUF_PUT_AVAIL_TOTAL(&con->sock_con.recvbuf), &read);
 
-	VTM_BUF_PUT_INC(&con->sock_con.recvbuf, read);
-	switch (rc) {
-		case VTM_OK:
-			return vtm_nm_parser_run(&con->parser, &con->sock_con.recvbuf);
+		switch (rc) {
+			case VTM_OK:
+				VTM_BUF_PUT_INC(&con->sock_con.recvbuf, read);
+				break;
 
-		case VTM_E_IO_AGAIN:
-			return VTM_NET_RECV_STAT_AGAIN;
+			case VTM_E_IO_AGAIN:
+				if (VTM_BUF_GET_AVAIL_TOTAL(&con->sock_con.recvbuf) == 0)
+					return VTM_NET_RECV_STAT_AGAIN;
+				break;
 
-		default:
-			break;
+			default:
+				return VTM_NET_RECV_STAT_ERROR;
+		}
+
+		stat = vtm_nm_parser_run(&con->parser, &con->sock_con.recvbuf);
+		switch (stat) {
+			case VTM_NET_RECV_STAT_COMPLETE:
+				return stat;
+
+			case VTM_NET_RECV_STAT_AGAIN:
+				if (rc == VTM_E_IO_AGAIN)
+					return stat;
+				continue;
+
+			default:
+				return stat;
+		}
 	}
+
+	VTM_ABORT_NOT_REACHABLE;
 	return VTM_NET_RECV_STAT_ERROR;
 }
 

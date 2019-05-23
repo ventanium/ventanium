@@ -209,28 +209,30 @@ static void vtm_nm_stream_srv_sock_can_read(vtm_socket_stream_srv *sock_srv, vtm
 	con = vtm_socket_get_usr_data(client);
 	VTM_ASSERT(con);
 
-	stat = vtm_nm_stream_con_read(con);
-	switch (stat) {
-		case VTM_NET_RECV_STAT_ERROR:
-		case VTM_NET_RECV_STAT_INVALID:
-			vtm_socket_close(client);
-			break;
-
-		case VTM_NET_RECV_STAT_COMPLETE:
-			msg = vtm_nm_stream_con_get_msg(con);
-			if (!msg) {
+	while (true) {
+		stat = vtm_nm_stream_con_read(con);
+		switch (stat) {
+			case VTM_NET_RECV_STAT_ERROR:
+			case VTM_NET_RECV_STAT_INVALID:
 				vtm_socket_close(client);
 				return;
-			}
 
-			if (srv->cbs.client_msg)
-				srv->cbs.client_msg(srv, wd, con, msg);
+			case VTM_NET_RECV_STAT_COMPLETE:
+				msg = vtm_nm_stream_con_get_msg(con);
+				if (!msg) {
+					vtm_socket_close(client);
+					return;
+				}
 
-			vtm_dataset_free(msg);
-			break;
+				if (srv->cbs.client_msg)
+					srv->cbs.client_msg(srv, wd, con, msg);
 
-		default:
-			break;
+				vtm_dataset_free(msg);
+				continue;
+
+			default:
+				return;
+		}
 	}
 }
 

@@ -175,12 +175,14 @@ int vtm_socket_write(vtm_socket *sock, const void *src, size_t len, size_t *out_
 		goto unlock;
 	}
 
-	vtm_flag_unset(sock->state, VTM_SOCK_STAT_WRITE_AGAIN);
+	vtm_flag_unset(sock->state, VTM_SOCK_STAT_WRITE_AGAIN |
+		VTM_SOCK_STAT_WRITE_AGAIN_WHEN_READABLE);
 	rc = sock->vtable->vtm_socket_write(sock, src, len, out_written);
 
 	/* check if NBL hints must be changed */
 	if (sock->state & VTM_SOCK_STAT_NBL_AUTO) {
-		if (sock->state & VTM_SOCK_STAT_WRITE_AGAIN) {
+		if (sock->state & (VTM_SOCK_STAT_WRITE_AGAIN |
+			VTM_SOCK_STAT_READ_AGAIN_WHEN_WRITEABLE)) {
 			sock->state &= ~VTM_SOCK_STAT_NBL_READ;
 			sock->state |= VTM_SOCK_STAT_NBL_WRITE;
 		}
@@ -203,11 +205,21 @@ int vtm_socket_read(vtm_socket *sock, void *buf, size_t len, size_t *out_read)
 	vtm_socket_lock(sock);
 	if (VTM_SOCKET_IS_CLOSED(sock)) {
 		rc = VTM_E_IO_CLOSED;
+		goto unlock;
 	}
-	else {
-		vtm_flag_unset(sock->state, VTM_SOCK_STAT_READ_AGAIN);
-		rc = sock->vtable->vtm_socket_read(sock, buf, len, out_read);
+
+	vtm_flag_unset(sock->state, VTM_SOCK_STAT_READ_AGAIN |
+		VTM_SOCK_STAT_READ_AGAIN_WHEN_WRITEABLE);
+	rc = sock->vtable->vtm_socket_read(sock, buf, len, out_read);
+
+	/* check if NBL hints must be changed */
+	if ((sock->state & VTM_SOCK_STAT_NBL_AUTO) &&
+		(sock->state & VTM_SOCK_STAT_READ_AGAIN_WHEN_WRITEABLE)) {
+		sock->state &= ~VTM_SOCK_STAT_NBL_READ;
+		sock->state |= VTM_SOCK_STAT_NBL_WRITE;
 	}
+
+unlock:
 	vtm_socket_unlock(sock);
 
 	return rc;

@@ -424,10 +424,22 @@ static int vtm_socket_stream_srv_handle_direct(vtm_socket_stream_srv *srv, struc
 					}
 					continue;
 				}
-				vtm_socket_stream_srv_sock_can_read(srv, wd, sock);
+				if (vtm_socket_get_state(sock) &
+					VTM_SOCK_STAT_WRITE_AGAIN_WHEN_READABLE) {
+					vtm_socket_stream_srv_sock_can_write(srv, wd, sock);
+				}
+				else {
+					vtm_socket_stream_srv_sock_can_read(srv, wd, sock);
+				}
 			}
 			if (events[i].events & VTM_SOCK_EVT_WRITE) {
-				vtm_socket_stream_srv_sock_can_write(srv, wd, sock);
+				if (vtm_socket_get_state(sock) &
+					VTM_SOCK_STAT_READ_AGAIN_WHEN_WRITEABLE) {
+					vtm_socket_stream_srv_sock_can_read(srv, wd, sock);
+				}
+				else {
+					vtm_socket_stream_srv_sock_can_write(srv, wd, sock);
+				}
 			}
 		}
 	}
@@ -442,6 +454,7 @@ static int vtm_socket_stream_srv_handle_queued(vtm_socket_stream_srv *srv, struc
 	size_t i, count;
 	vtm_socket *sock, *acc;
 	struct vtm_socket_stream_srv_entry *event;
+	enum vtm_socket_stream_srv_entry_type event_type;
 
 	errc = 0;
 	acc = NULL;
@@ -496,7 +509,12 @@ static int vtm_socket_stream_srv_handle_queued(vtm_socket_stream_srv *srv, struc
 				continue;
 			}
 
-			rc = vtm_socket_stream_srv_create_event(srv, VTM_SOCK_SRV_READ, sock);
+			event_type = (vtm_socket_get_state(sock) &
+				VTM_SOCK_STAT_WRITE_AGAIN_WHEN_READABLE)
+					? VTM_SOCK_SRV_WRITE
+					: VTM_SOCK_SRV_READ;
+
+			rc = vtm_socket_stream_srv_create_event(srv, event_type, sock);
 			if (rc != VTM_OK) {
 				errc++;
 				break;
@@ -505,7 +523,13 @@ static int vtm_socket_stream_srv_handle_queued(vtm_socket_stream_srv *srv, struc
 
 		/* write */
 		if (events[i].events & VTM_SOCK_EVT_WRITE) {
-			rc = vtm_socket_stream_srv_create_event(srv, VTM_SOCK_SRV_WRITE, sock);
+
+			event_type = (vtm_socket_get_state(sock) &
+				VTM_SOCK_STAT_READ_AGAIN_WHEN_WRITEABLE)
+					? VTM_SOCK_SRV_READ
+					: VTM_SOCK_SRV_WRITE;
+
+			rc = vtm_socket_stream_srv_create_event(srv, event_type, sock);
 			if (rc != VTM_OK) {
 				errc++;
 				break;
@@ -1046,7 +1070,10 @@ static int vtm_socket_stream_srv_sock_cb_update(void *stream_srv, vtm_socket *so
 		vtm_socket_stream_srv_create_relay_event(srv, VTM_SOCK_SRV_CLOSED, sock);
 		vtm_socket_listener_interrupt(srv->listener);
 	}
-	else if (sock->state & (VTM_SOCK_STAT_READ_AGAIN | VTM_SOCK_STAT_WRITE_AGAIN)) {
+	else if (sock->state & (VTM_SOCK_STAT_READ_AGAIN |
+				VTM_SOCK_STAT_READ_AGAIN_WHEN_WRITEABLE |
+				VTM_SOCK_STAT_WRITE_AGAIN |
+				VTM_SOCK_STAT_WRITE_AGAIN_WHEN_READABLE)) {
 		vtm_socket_listener_rearm(srv->listener, sock);
 	}
 

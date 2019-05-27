@@ -16,16 +16,32 @@
 #include <openssl/ssl.h>
 
 #include <vtm/core/error.h>
+#include <vtm/core/math.h>
+#include <vtm/net/common.h>
 #include <vtm/net/socket_intl.h>
 #include <vtm/sys/base/net/socket_util_intl.h>
 
-#define VTM_TLS_RENOGOTIATION_RETRIES  512
+#define VTM_SOCKET_TLS_BUF_SIZE     16384
+
+enum vtm_socket_tls_operation
+{
+	VTM_TLS_OP_ACCEPT,
+	VTM_TLS_OP_CONNECT,
+	VTM_TLS_OP_READ,
+	VTM_TLS_OP_WRITE,
+	VTM_TLS_OP_SHUTDOWN
+};
 
 struct vtm_socket_tls_info
 {
 	SSL_CTX *ctx;
-	SSL* ssl;
+	SSL *ssl;
 	bool free_ctx;
+	bool use_buffers;
+	void *recv_buf;
+	size_t recv_buf_len;
+	size_t recv_buf_used;
+	size_t send_want_bytes;
 };
 
 /* forward declaration */
@@ -35,18 +51,22 @@ static SSL_CTX* vtm_socket_tls_create_ctx(struct vtm_socket_tls_opts *opts);
 static SSL_CTX* vtm_socket_tls_get_ctx(struct vtm_socket *sock);
 static SSL* vtm_socket_tls_get_ssl(struct vtm_socket *sock);
 
-static void vtm_socket_tls_free(struct vtm_socket *sock);
-static int  vtm_socket_tls_accept(struct vtm_socket *sock, struct vtm_socket **client);
-static int  vtm_socket_tls_connect(struct vtm_socket *sock, const char* host, unsigned int port);
-static int  vtm_socket_tls_shutdown(struct vtm_socket *sock, int dir);
-static int  vtm_socket_tls_close(struct vtm_socket *sock);
-static int  vtm_socket_tls_write(struct vtm_socket *sock, const void *src, size_t len, size_t *out_written);
-static int  vtm_socket_tls_read(struct vtm_socket *sock, void *buf, size_t len, size_t *out_read);
-static int  vtm_socket_tls_dgram_recv(struct vtm_socket *sock, void *buf, size_t maxlen, size_t *out_recv, struct vtm_socket_saddr *saddr);
-static int  vtm_socket_tls_dgram_send(struct vtm_socket *sock, const void *buf, size_t len, size_t *out_send, const struct vtm_socket_saddr *saddr);
-static int  vtm_socket_tls_check_error(struct vtm_socket *sock, SSL *ssl, int code);
-static int  vtm_socket_tls_save_error(int code);
-static bool vtm_socket_tls_is_renegotiation(struct vtm_socket *sock, int code);
+static void   vtm_socket_tls_free(struct vtm_socket *sock);
+static int    vtm_socket_tls_accept(struct vtm_socket *sock, struct vtm_socket **client);
+static int    vtm_socket_tls_connect(struct vtm_socket *sock, const char* host, unsigned int port);
+static int    vtm_socket_tls_shutdown(struct vtm_socket *sock, int dir);
+static int    vtm_socket_tls_close(struct vtm_socket *sock);
+static int    vtm_socket_tls_write(struct vtm_socket *sock, const void *src, size_t len, size_t *out_written);
+static int    vtm_socket_tls_read(struct vtm_socket *sock, void *buf, size_t len, size_t *out_read);
+static size_t vtm_socket_tls_read_buf(struct vtm_socket_tls_info *info, void *buf, size_t len);
+static int    vtm_socket_tls_dgram_recv(struct vtm_socket *sock, void *buf, size_t maxlen, size_t *out_recv, struct vtm_socket_saddr *saddr);
+static int    vtm_socket_tls_dgram_send(struct vtm_socket *sock, const void *buf, size_t len, size_t *out_send, const struct vtm_socket_saddr *saddr);
+static int    vtm_socket_tls_convert_error(struct vtm_socket *sock, SSL *ssl, int code, enum vtm_socket_tls_operation op);
+static int    vtm_socket_tls_save_error(int code);
+static int    vtm_socket_tls_set_opt(struct vtm_socket *sock, int opt, const void *val, size_t len);
+static int    vtm_socket_tls_enable_buffers(struct vtm_socket *sock);
+static void   vtm_socket_tls_disable_buffers(struct vtm_socket *sock);
+static void   vtm_socket_tls_release_buffers(struct vtm_socket *sock);
 
 /* vtable */
 static struct vtm_socket_vtable vtm_socket_tls_vtable = {
@@ -61,7 +81,7 @@ static struct vtm_socket_vtable vtm_socket_tls_vtable = {
 	.vtm_socket_read = vtm_socket_tls_read,
 	.vtm_socket_dgram_recv = vtm_socket_tls_dgram_recv,
 	.vtm_socket_dgram_send = vtm_socket_tls_dgram_send,
-	.vtm_socket_set_opt = vtm_socket_util_set_opt,
+	.vtm_socket_set_opt = vtm_socket_tls_set_opt,
 	.vtm_socket_get_opt = vtm_socket_util_get_opt,
 	.vtm_socket_get_remote_addr = vtm_socket_util_get_remote_addr
 };
@@ -144,6 +164,11 @@ static vtm_socket* vtm_socket_tls_alloc(enum vtm_socket_family fam, int sockfd, 
 	info->ssl = ssl;
 	info->ctx = ctx;
 	info->free_ctx = free_ctx;
+	info->use_buffers = false;
+	info->recv_buf = NULL;
+	info->recv_buf_len = 0;
+	info->recv_buf_used = 0;
+	info->send_want_bytes = 0;
 
 	sock->fd = sockfd;
 	sock->family = fam;
@@ -167,6 +192,8 @@ static void vtm_socket_tls_free(struct vtm_socket *sock)
 		SSL_free(info->ssl);
 	if (info->free_ctx)
 		SSL_CTX_free(info->ctx);
+	if (info->use_buffers)
+		vtm_socket_tls_release_buffers(sock);
 
 	free(sock->info);
 	free(sock);
@@ -213,9 +240,7 @@ static int vtm_socket_tls_accept(struct vtm_socket *sock, struct vtm_socket **cl
 		goto err_ssl;
 	}
 	else if (rc < 0) {
-		rc = vtm_socket_tls_check_error(NULL, ssl, rc);
-		if (rc == VTM_E_IO_AGAIN)
-			vtm_socket_set_state_intl(sock, VTM_SOCK_STAT_READ_AGAIN);
+		rc = vtm_socket_tls_convert_error(NULL, ssl, rc, VTM_TLS_OP_ACCEPT);
 		goto err_ssl;
 	}
 
@@ -238,7 +263,7 @@ err_sock:
 
 static int vtm_socket_tls_connect(struct vtm_socket *sock, const char* host, unsigned int port)
 {
-	int rc, retries;
+	int rc;
 	SSL *ssl;
 
 	rc = vtm_socket_util_connect(sock, host, port);
@@ -246,19 +271,9 @@ static int vtm_socket_tls_connect(struct vtm_socket *sock, const char* host, uns
 		return rc;
 
 	ssl = vtm_socket_tls_get_ssl(sock);
-	retries = 0;
-
-retry:
 	rc = SSL_connect(ssl);
-	if (rc <= 0) {
-		rc = vtm_socket_tls_check_error(sock, ssl, rc);
-		if (vtm_socket_tls_is_renegotiation(sock, rc)
-			&& retries++ < VTM_TLS_RENOGOTIATION_RETRIES)
-			goto retry;
-		if (rc == VTM_E_IO_AGAIN)
-			vtm_socket_set_state_intl(sock, VTM_SOCK_STAT_READ_AGAIN);
-		return rc;
-	}
+	if (rc <= 0)
+		return vtm_socket_tls_convert_error(sock, ssl, rc, VTM_TLS_OP_CONNECT);
 
 	return VTM_OK;
 }
@@ -274,7 +289,7 @@ static int vtm_socket_tls_shutdown(struct vtm_socket *sock, int dir)
 
 	rc = SSL_shutdown(ssl);
 	if (rc <= 0)
-		return vtm_socket_tls_check_error(sock, ssl, rc);
+		return vtm_socket_tls_convert_error(sock, ssl, rc, VTM_TLS_OP_SHUTDOWN);
 
 	return VTM_OK;
 }
@@ -294,24 +309,36 @@ static int vtm_socket_tls_close(struct vtm_socket *sock)
 
 static int vtm_socket_tls_write(struct vtm_socket *sock, const void *src, size_t len, size_t *out_written)
 {
-	int rc, num;
+	int rc, num, wlen;
 	size_t written;
+	struct vtm_socket_tls_info *info;
 	SSL *ssl;
 
-	rc = VTM_OK;
-	ssl = vtm_socket_tls_get_ssl(sock);
-
+	info = sock->info;
+	ssl = info->ssl;
 	written = 0;
+
 	while (written != len) {
-		num = SSL_write(ssl, (const char*) src + written, len - written);
+		wlen = VTM_MIN(INT_MAX, len-written);
+
+		/* pending WANT_WRITE repetition? */
+		if (info->use_buffers && info->send_want_bytes > 0) {
+			wlen = info->send_want_bytes;
+			info->send_want_bytes = 0;
+		}
+
+		num = SSL_write(ssl, (const char*) src + written, (int) wlen);
 		if (num <= 0) {
-			rc = vtm_socket_tls_check_error(sock, ssl, num);
-			if (rc == VTM_E_IO_AGAIN)
-				vtm_socket_set_state_intl(sock, VTM_SOCK_STAT_WRITE_AGAIN);
+			rc = vtm_socket_tls_convert_error(sock, ssl, num, VTM_TLS_OP_WRITE);
+			if (info->use_buffers && rc == VTM_E_IO_AGAIN)
+				info->send_want_bytes = wlen;
 			goto out;
 		}
-		written += num;
+
+		written += (size_t) num;
 	}
+
+	rc = VTM_OK;
 
 out:
 	*out_written = written;
@@ -320,31 +347,67 @@ out:
 
 static int vtm_socket_tls_read(struct vtm_socket *sock, void *buf, size_t len, size_t *out_read)
 {
-	int rc, num, rlen, retries;
+	int rc, num;
+	struct vtm_socket_tls_info *info;
 	SSL *ssl;
 
-	ssl = vtm_socket_tls_get_ssl(sock);
-	if (!ssl)
-		return vtm_err_set(VTM_E_ASSERT_FAILED);
-
-	rlen = (len < INT_MAX) ? (int) len : INT_MAX;
-	retries = 0;
-
-retry:
 	rc = VTM_OK;
-	num = SSL_read(ssl, buf, rlen);
+	info = sock->info;
+	ssl = info->ssl;
+
+	/* OpenSSL expects length as int */
+	if (len > INT_MAX)
+		len = INT_MAX;
+
+	/* use buffers for non-blocking mode? */
+	if (info->use_buffers) {
+
+		/* pending data in buffer available? */
+		if (info->recv_buf_used > 0) {
+			num = (int) vtm_socket_tls_read_buf(info, buf, len);
+			goto out;
+		}
+
+		num = SSL_read(ssl, info->recv_buf, (int) info->recv_buf_len);
+		if (num <= 0) {
+			rc = vtm_socket_tls_convert_error(sock, ssl, num, VTM_TLS_OP_READ);
+			num = 0;
+		}
+		else {
+			info->recv_buf_used = (size_t) num;
+			num = (int) vtm_socket_tls_read_buf(info, buf, len);
+		}
+		goto out;
+	}
+
+	/* read directly into provided buffer */
+	num = SSL_read(ssl, buf, (int) len);
 	if (num <= 0) {
-		rc = vtm_socket_tls_check_error(sock, ssl, num);
-		if (vtm_socket_tls_is_renegotiation(sock, rc)
-			&& retries++ < VTM_TLS_RENOGOTIATION_RETRIES)
-			goto retry;
-		if (rc == VTM_E_IO_AGAIN)
-			vtm_socket_set_state_intl(sock, VTM_SOCK_STAT_READ_AGAIN);
+		rc = vtm_socket_tls_convert_error(sock, ssl, num, VTM_TLS_OP_READ);
 		num = 0;
 	}
 
+out:
 	*out_read = num;
 	return rc;
+}
+
+static size_t vtm_socket_tls_read_buf(struct vtm_socket_tls_info *info, void *buf, size_t len)
+{
+	size_t read;
+
+	read = VTM_MIN(len, info->recv_buf_used);
+	memcpy(buf, info->recv_buf, read);
+	if (read == info->recv_buf_used) {
+		info->recv_buf_used = 0;
+	}
+	else {
+		info->recv_buf_used -= read;
+		memmove(info->recv_buf, ((char*) info->recv_buf) + read,
+				info->recv_buf_used);
+	}
+
+	return read;
 }
 
 static int vtm_socket_tls_dgram_recv(struct vtm_socket *sock, void *buf, size_t maxlen, size_t *out_recv, struct vtm_socket_saddr *saddr)
@@ -414,7 +477,8 @@ static SSL_CTX* vtm_socket_tls_create_ctx(struct vtm_socket_tls_opts *opts)
 		goto err;
 
 	/* set options */
-	SSL_CTX_set_mode(ctx, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
+	SSL_CTX_set_mode(ctx, SSL_MODE_AUTO_RETRY |
+			SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
 
 	return ctx;
 
@@ -425,7 +489,7 @@ err:
 	return NULL;
 }
 
-static int vtm_socket_tls_check_error(struct vtm_socket *sock, SSL *ssl, int code)
+static int vtm_socket_tls_convert_error(struct vtm_socket *sock, SSL *ssl, int code, enum vtm_socket_tls_operation op)
 {
 	int rc;
 	unsigned int state;
@@ -434,8 +498,56 @@ static int vtm_socket_tls_check_error(struct vtm_socket *sock, SSL *ssl, int cod
 	rc = SSL_get_error(ssl, code);
 	switch (rc) {
 		case SSL_ERROR_NONE:
+			switch (op) {
+				case VTM_TLS_OP_ACCEPT:
+				case VTM_TLS_OP_CONNECT:
+				case VTM_TLS_OP_READ:
+					state = VTM_SOCK_STAT_READ_AGAIN;
+					break;
+
+				case VTM_TLS_OP_WRITE:
+					state = VTM_SOCK_STAT_WRITE_AGAIN;
+					break;
+
+				default:
+					break;
+			}
+			rc = VTM_E_IO_AGAIN;
+			break;
+
 		case SSL_ERROR_WANT_READ:
+			switch (op) {
+				case VTM_TLS_OP_ACCEPT:
+				case VTM_TLS_OP_CONNECT:
+				case VTM_TLS_OP_READ:
+					state = VTM_SOCK_STAT_READ_AGAIN;
+					break;
+
+				case VTM_TLS_OP_WRITE:
+					state = VTM_SOCK_STAT_WRITE_AGAIN_WHEN_READABLE;
+					break;
+
+				default:
+					break;
+			}
+			rc = VTM_E_IO_AGAIN;
+			break;
+
 		case SSL_ERROR_WANT_WRITE:
+			switch (op) {
+				case VTM_TLS_OP_ACCEPT:
+				case VTM_TLS_OP_CONNECT:
+				case VTM_TLS_OP_READ:
+					state = VTM_SOCK_STAT_READ_AGAIN_WHEN_WRITEABLE;
+					break;
+
+				case VTM_TLS_OP_WRITE:
+					state = VTM_SOCK_STAT_WRITE_AGAIN;
+					break;
+
+				default:
+					break;
+			}
 			rc = VTM_E_IO_AGAIN;
 			break;
 
@@ -480,17 +592,64 @@ static int vtm_socket_tls_save_error(int code)
 		buf, file, line, (flags & ERR_TXT_STRING) ? data : "");
 }
 
-static bool vtm_socket_tls_is_renegotiation(struct vtm_socket *sock, int code)
+static int vtm_socket_tls_set_opt(struct vtm_socket *sock, int opt, const void *val, size_t len)
 {
 	int rc;
-	bool nbl;
 
-	if (code != VTM_E_IO_AGAIN)
-		return false;
+	rc = vtm_socket_util_set_opt(sock, opt, val, len);
+	if (rc == VTM_OK) {
+		switch (opt) {
+			case VTM_SOCK_OPT_NONBLOCKING:
+				if (*((bool*)val))
+					rc = vtm_socket_tls_enable_buffers(sock);
+				else
+					vtm_socket_tls_disable_buffers(sock);
+				break;
+		}
+	}
+	return rc;
+}
 
-	rc = vtm_socket_get_opt(sock, VTM_SOCK_OPT_NONBLOCKING, &nbl, sizeof(bool));
-	if (rc != VTM_OK)
-		return false;
+static int vtm_socket_tls_enable_buffers(struct vtm_socket *sock)
+{
+	struct vtm_socket_tls_info *info;
 
-	return !nbl;
+	info = sock->info;
+
+	if (info->use_buffers)
+		return VTM_OK;
+
+	info->recv_buf = malloc(VTM_SOCKET_TLS_BUF_SIZE);
+	if (!info->recv_buf) {
+		vtm_err_oom();
+		return vtm_err_get_code();
+	}
+
+	info->recv_buf_len = VTM_SOCKET_TLS_BUF_SIZE;
+	info->recv_buf_used = 0;
+	info->send_want_bytes = 0;
+	info->use_buffers = true;
+
+	return VTM_OK;
+}
+
+static void vtm_socket_tls_disable_buffers(struct vtm_socket *sock)
+{
+	struct vtm_socket_tls_info *info;
+
+	info = sock->info;
+
+	if (info->use_buffers) {
+		vtm_socket_tls_release_buffers(sock);
+		info->use_buffers = false;
+	}
+}
+
+static void vtm_socket_tls_release_buffers(struct vtm_socket *sock)
+{
+	struct vtm_socket_tls_info *info;
+
+	info = sock->info;
+
+	free(info->recv_buf);
 }

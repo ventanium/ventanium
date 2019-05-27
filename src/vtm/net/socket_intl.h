@@ -19,8 +19,9 @@
 extern "C" {
 #endif
 
-#define VTM_SOCK_FD(SOCK)                       (SOCK)->fd
-#define vtm_socket_set_state_intl(SOCK, FLAGS)  vtm_flag_set((SOCK)->state, (FLAGS))
+#define VTM_SOCK_FD(SOCK)                          (SOCK)->fd
+#define vtm_socket_set_state_intl(SOCK, FLAGS)     vtm_flag_set((SOCK)->state, (FLAGS))
+#define vtm_socket_remove_state_intl(SOCK, FLAGS)  vtm_flag_unset((SOCK)->state, (FLAGS))
 
 struct vtm_socket_vtable
 {

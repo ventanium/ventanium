@@ -247,8 +247,8 @@ static int vtm_socket_plain_read(struct vtm_socket *sock, void *buf, size_t len,
 		num = 0;
 	}
 	else if (num == 0) {
-		rc = VTM_E_IO_CLOSED;
-		state = VTM_SOCK_STAT_CLOSED;
+		rc = VTM_E_IO_EOF;
+		state = VTM_SOCK_STAT_HUP;
 	}
 	else {
 		rc = VTM_OK;

@@ -387,7 +387,6 @@ static int vtm_socket_stream_srv_handle_direct(vtm_socket_stream_srv *srv, struc
 		VTM_STREAM_SRV_WORKER_SET_SOCKET(event->sock);
 		switch (event->type) {
 			case VTM_SOCK_SRV_CLOSED:
-				vtm_socket_set_state(event->sock, VTM_SOCK_STAT_CLOSED);
 				vtm_socket_stream_srv_sock_closed(srv, wd, event->sock);
 				break;
 
@@ -408,7 +407,7 @@ static int vtm_socket_stream_srv_handle_direct(vtm_socket_stream_srv *srv, struc
 		sock = events[i].sock;
 		VTM_STREAM_SRV_WORKER_SET_SOCKET(sock);
 		if (events[i].events & VTM_SOCK_EVT_CLOSED) {
-			vtm_socket_set_state(sock, VTM_SOCK_STAT_CLOSED);
+			vtm_socket_close(sock);
 			vtm_socket_stream_srv_sock_closed(srv, wd, sock);
 		}
 		else if (events[i].events & VTM_SOCK_EVT_ERROR) {
@@ -483,7 +482,7 @@ static int vtm_socket_stream_srv_handle_queued(vtm_socket_stream_srv *srv, struc
 
 		/* closed */
 		if (events[i].events & VTM_SOCK_EVT_CLOSED) {
-			vtm_socket_set_state(sock, VTM_SOCK_STAT_CLOSED);
+			vtm_socket_close(sock);
 			rc = vtm_socket_stream_srv_create_event(srv, VTM_SOCK_SRV_CLOSED, sock);
 			if (rc != VTM_OK) {
 				errc++;
@@ -921,12 +920,17 @@ static VTM_INLINE int vtm_socket_stream_srv_sock_check(vtm_socket_stream_srv *sr
 eval:
 	state = vtm_socket_get_state(sock);
 	if (state & VTM_SOCK_STAT_ERR) {
-			vtm_socket_stream_srv_sock_error(srv, wd, sock);
-			return VTM_E_IO_UNKNOWN;
+		vtm_socket_stream_srv_sock_error(srv, wd, sock);
+		return VTM_E_IO_UNKNOWN;
 	}
 	else if (state & VTM_SOCK_STAT_CLOSED) {
-			vtm_socket_stream_srv_sock_closed(srv, wd, sock);
-			return VTM_E_IO_CLOSED;
+		vtm_socket_stream_srv_sock_closed(srv, wd, sock);
+		return VTM_E_IO_CLOSED;
+	}
+	else if (state & VTM_SOCK_STAT_HUP) {
+		vtm_socket_close(sock);
+		vtm_socket_stream_srv_sock_closed(srv, wd, sock);
+		return VTM_E_IO_CLOSED;
 	}
 
 	if (rearm) {
@@ -1067,6 +1071,12 @@ static int vtm_socket_stream_srv_sock_cb_update(void *stream_srv, vtm_socket *so
 	}
 	else if (sock->state & VTM_SOCK_STAT_CLOSED) {
 		vtm_socket_ref(sock);
+		vtm_socket_stream_srv_create_relay_event(srv, VTM_SOCK_SRV_CLOSED, sock);
+		vtm_socket_listener_interrupt(srv->listener);
+	}
+	else if (sock->state & VTM_SOCK_STAT_HUP) {
+		vtm_socket_ref(sock);
+		vtm_socket_close(sock);
 		vtm_socket_stream_srv_create_relay_event(srv, VTM_SOCK_SRV_CLOSED, sock);
 		vtm_socket_listener_interrupt(srv->listener);
 	}

@@ -552,8 +552,8 @@ static int vtm_socket_tls_convert_error(struct vtm_socket *sock, SSL *ssl, int c
 			break;
 
 		case SSL_ERROR_ZERO_RETURN:
-			state = VTM_SOCK_STAT_CLOSED;
-			rc = VTM_E_IO_CLOSED;
+			state = VTM_SOCK_STAT_HUP;
+			rc = VTM_E_IO_EOF;
 			break;
 
 		case SSL_ERROR_SSL:

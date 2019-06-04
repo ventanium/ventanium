@@ -21,7 +21,8 @@
 #include <vtm/net/socket_intl.h>
 #include <vtm/sys/base/net/socket_util_intl.h>
 
-#define VTM_SOCKET_TLS_BUF_SIZE     16384
+#define VTM_SOCKET_TLS_BUF_SIZE               16384
+#define VTM_SOCKET_TLS_ACCEPT_TIMEOUT_MILLIS  10000
 
 enum vtm_socket_tls_operation
 {
@@ -233,6 +234,12 @@ static int vtm_socket_tls_accept(struct vtm_socket *sock, struct vtm_socket **cl
 		goto err_sock;
 	}
 
+	/* set receive timeout to avoid being blocked indefinitely in SSL handshake */
+	rc = vtm_socket_util_set_recv_timeout(sockfd, NULL,
+			VTM_SOCKET_TLS_ACCEPT_TIMEOUT_MILLIS);
+	if (rc != VTM_OK)
+		goto err_ssl;
+
 	SSL_set_fd(ssl, sockfd);
 	rc = SSL_accept(ssl);
 	if (rc == 0) {
@@ -248,6 +255,13 @@ static int vtm_socket_tls_accept(struct vtm_socket *sock, struct vtm_socket **cl
 	if (!out) {
 		rc = VTM_ERROR;
 		goto err_ssl;
+	}
+
+	/* reset receive timeout */
+	rc = vtm_socket_util_set_recv_timeout(sockfd, out, 0);
+	if (rc != VTM_OK) {
+		vtm_socket_tls_free(out);
+		return rc;
 	}
 
 	*client = out;

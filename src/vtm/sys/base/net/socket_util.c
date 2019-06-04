@@ -69,7 +69,6 @@ static int vtm_socket_util_bind_ip4(struct vtm_socket *sock, int sockfam, int ad
 static int vtm_socket_util_bind_ip6(struct vtm_socket *sock, int sockfam, int addr_type, const char *addr, unsigned int port);
 static int vtm_socket_util_set_tcp_nodelay(struct vtm_socket *sock, bool enabled);
 static int vtm_socket_util_get_tcp_nodelay(struct vtm_socket *sock, bool *enabled);
-static int vtm_socket_util_set_recv_timeout(struct vtm_socket *sock, unsigned long millis);
 static int vtm_socket_util_set_send_timeout(struct vtm_socket *sock, unsigned long millis);
 
 int vtm_socket_util_block_sigpipe(vtm_sys_socket_t fd)
@@ -308,7 +307,7 @@ int vtm_socket_util_set_opt(struct vtm_socket *sock, int opt, const void *val, s
 		case VTM_SOCK_OPT_RECV_TIMEOUT:
 			if (len != sizeof(unsigned long))
 				return VTM_E_INVALID_ARG;
-			return vtm_socket_util_set_recv_timeout(sock, *((unsigned long*)val));
+			return vtm_socket_util_set_recv_timeout(sock->fd, sock, *((unsigned long*)val));
 
 		case VTM_SOCK_OPT_SEND_TIMEOUT:
 			if (len != sizeof(unsigned long))
@@ -462,7 +461,7 @@ static int vtm_socket_util_get_tcp_nodelay(struct vtm_socket *sock, bool *enable
 	return VTM_OK;
 }
 
-static int vtm_socket_util_set_recv_timeout(struct vtm_socket *sock, unsigned long millis)
+int vtm_socket_util_set_recv_timeout(vtm_sys_socket_t fd, struct vtm_socket *sock, unsigned long millis)
 {
 	int rc;
 #ifdef VTM_HAVE_POSIX
@@ -474,7 +473,7 @@ static int vtm_socket_util_set_recv_timeout(struct vtm_socket *sock, unsigned lo
 	val = millis;
 #endif
 
-	rc = setsockopt(sock->fd, SOL_SOCKET, SO_RCVTIMEO, VTM_SETSOCKOPT_CAST &val, sizeof(val));
+	rc = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, VTM_SETSOCKOPT_CAST &val, sizeof(val));
 	if (rc != 0)
 		return vtm_socket_util_error(sock);
 

@@ -226,7 +226,7 @@ int vtm_socket_stream_srv_run(vtm_socket_stream_srv *srv, struct vtm_socket_stre
 	vtm_spinlock_unlock(&srv->stop_lock);
 
 	/* run queue listener */
-	vtm_socket_stream_srv_main_run(srv);
+	rc = vtm_socket_stream_srv_main_run(srv);
 
 	/* end for workers */
 	vtm_socket_stream_srv_workers_interrupt(srv);

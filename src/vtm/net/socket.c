@@ -171,6 +171,7 @@ int vtm_socket_write(vtm_socket *sock, const void *src, size_t len, size_t *out_
 
 	vtm_socket_lock(sock);
 	if (VTM_SOCKET_IS_CLOSED(sock)) {
+		*out_written = 0;
 		rc = VTM_E_IO_CLOSED;
 		goto unlock;
 	}
@@ -204,6 +205,7 @@ int vtm_socket_read(vtm_socket *sock, void *buf, size_t len, size_t *out_read)
 
 	vtm_socket_lock(sock);
 	if (VTM_SOCKET_IS_CLOSED(sock)) {
+		*out_read = 0;
 		rc = VTM_E_IO_CLOSED;
 		goto unlock;
 	}

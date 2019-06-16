@@ -61,12 +61,14 @@ extern void test_vtm_net_http_server(void);
 extern void test_vtm_net_nm_dgram(void);
 extern void test_vtm_net_nm_stream(void);
 extern void test_vtm_net_nm_stream_mt(void);
+extern void test_vtm_net_socket(void);
 extern void test_vtm_net_url(void);
 
 void test_net(void)
 {
 	vtm_test_set_module("net");
 	vtm_test_run(test_vtm_net_url);
+	vtm_test_run(test_vtm_net_socket);
 	vtm_test_run(test_vtm_net_nm_dgram);
 	vtm_test_run(test_vtm_net_nm_stream);
 	vtm_test_run(test_vtm_net_nm_stream_mt);

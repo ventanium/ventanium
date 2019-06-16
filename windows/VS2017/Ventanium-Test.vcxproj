@@ -238,6 +238,7 @@
     <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_nm_dgram.c" />
     <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_nm_stream.c" />
     <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_nm_stream_mt.c" />
+    <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_socket.c" />
     <ClCompile Include="$(VentaniumRoot)test\vtm\net\test_url.c" />
     <ClCompile Include="$(VentaniumRoot)test\vtm\sql\test_sql.c" />
     <ClCompile Include="$(VentaniumRoot)test\vtm\util\test_base64.c" />

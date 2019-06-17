@@ -22,7 +22,8 @@ struct vtm_sql_con_vt
 {
 	void *con_data;
 	enum vtm_sql_con_state state;
-	
+
+	int (*fn_set_lock_wait_timeout)(struct vtm_sql_con_vt *con, unsigned long millis);
 	int (*fn_set_auto_commit)(struct vtm_sql_con_vt *con, bool commit);
 	int (*fn_commit)(struct vtm_sql_con_vt *con);
 	int (*fn_rollback)(struct vtm_sql_con_vt *con);

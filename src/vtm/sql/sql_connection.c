@@ -21,6 +21,12 @@ const char* const VTM_SQL_PAR_USER = "USER";
 const char* const VTM_SQL_PAR_PASSWORD = "PASSWORD";
 const char* const VTM_SQL_PAR_DATABASE = "DATABASE";
 
+int vtm_sql_set_lock_wait_timeout(vtm_sql_con *con, unsigned long millis)
+{
+	VTM_SQL_CON_CHECK_STATE(con);
+	return con->fn_set_lock_wait_timeout(con, millis);
+}
+
 int vtm_sql_set_auto_commit(vtm_sql_con *con, bool commit)
 {
 	VTM_SQL_CON_CHECK_STATE(con);
@@ -55,7 +61,7 @@ int vtm_sql_execute_prepared(vtm_sql_con *con, const char *query, vtm_dataset *b
 {
 	int rc;
 	struct vtm_sql_stmt stmt;
-	
+
 	VTM_SQL_CON_CHECK_STATE(con);
 
 	rc = con->fn_prepare(con, query, &stmt);
@@ -67,7 +73,7 @@ int vtm_sql_execute_prepared(vtm_sql_con *con, const char *query, vtm_dataset *b
 		rc = vtm_sql_stmt_execute(&stmt);
 
 	vtm_sql_stmt_release(&stmt);
-	
+
 	return rc;
 }
 
@@ -81,7 +87,7 @@ int vtm_sql_query_prepared(vtm_sql_con *con, const char *query, vtm_dataset *bin
 {
 	int rc;
 	struct vtm_sql_stmt *stmt;
-	
+
 	VTM_SQL_CON_CHECK_STATE(con);
 
 	stmt = malloc(sizeof(*stmt));
@@ -89,7 +95,7 @@ int vtm_sql_query_prepared(vtm_sql_con *con, const char *query, vtm_dataset *bin
 		vtm_err_oom();
 		return vtm_err_get_code();
 	}
-	
+
 	rc = con->fn_prepare(con, query, stmt);
 	if (rc != VTM_OK)
 		return rc;
@@ -103,7 +109,7 @@ int vtm_sql_query_prepared(vtm_sql_con *con, const char *query, vtm_dataset *bin
 		goto end;
 
 	result->fn_release_owner = vtm_sql_stmt_free;
-	
+
 end:
 	if (rc != VTM_OK)
 		vtm_sql_stmt_free(stmt);
@@ -115,7 +121,7 @@ void vtm_sql_con_free(vtm_sql_con *con)
 {
 	if (!con)
 		return;
-	
+
 	con->fn_free(con);
 	free(con);
 }

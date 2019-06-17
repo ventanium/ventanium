@@ -14,5 +14,6 @@
 #define VTM_E_SQL_STORE_RESULT      -406
 #define VTM_E_SQL_PENDING_RESULT    -407
 #define VTM_E_SQL_EXEC_RESULT       -408
+#define VTM_E_SQL_LOCKED            -409
 
 #endif /* VTM_SQL_SQL_ERROR_H_ */

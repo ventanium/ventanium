@@ -9,5 +9,18 @@
 
 int vtm_sqlite_error_intl(int code, sqlite3 *con, const char *file, unsigned long line)
 {
-	return vtm_err_setf_intl(VTM_E_SQL_UNKNOWN, NULL, file, line, sqlite3_errmsg(con));
+	int rc;
+
+	switch (code) {
+		case SQLITE_BUSY:
+		case SQLITE_LOCKED:
+			rc = VTM_E_SQL_LOCKED;
+			break;
+
+		default:
+			rc = VTM_E_SQL_UNKNOWN;
+			break;
+	}
+
+	return vtm_err_setf_intl(rc, NULL, file, line, sqlite3_errmsg(con));
 }

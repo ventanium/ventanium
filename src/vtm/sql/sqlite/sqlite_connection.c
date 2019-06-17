@@ -20,6 +20,7 @@
 /* forward declaration */
 static int vtm_sqlite_connect(vtm_sql_con *con, vtm_dataset *param);
 static int vtm_sqlite_free(vtm_sql_con *con);
+static int vtm_sqlite_set_lock_wait_timeout(vtm_sql_con *con, unsigned long millis);
 static int vtm_sqlite_set_auto_commit(vtm_sql_con *con, bool commit);
 static int vtm_sqlite_commit(vtm_sql_con *con);
 static int vtm_sqlite_rollback(vtm_sql_con *con);
@@ -44,6 +45,7 @@ vtm_sql_con* vtm_sqlite_con_new(vtm_dataset *param)
 		return NULL;
 	}
 
+	result->fn_set_lock_wait_timeout = vtm_sqlite_set_lock_wait_timeout;
 	result->fn_set_auto_commit = vtm_sqlite_set_auto_commit;
 	result->fn_commit = vtm_sqlite_commit;
 	result->fn_rollback = vtm_sqlite_rollback;
@@ -61,19 +63,26 @@ static int vtm_sqlite_connect(vtm_sql_con *con, vtm_dataset *param)
 	sqlite3 *db;
 
 	const char* name = vtm_dataset_get_string(param, VTM_SQL_PAR_DATABASE);
-	
+
 	rc = sqlite3_open(name, &db);
 	if (rc != SQLITE_OK)
 		return VTM_ERROR;
 
 	con->con_data = db;
-	
+
 	return VTM_OK;
 }
 
 static int vtm_sqlite_free(vtm_sql_con *con)
 {
 	if (sqlite3_close(VTM_SQLITE_CON(con)) != SQLITE_OK)
+		return VTM_ERROR;
+	return VTM_OK;
+}
+
+static int vtm_sqlite_set_lock_wait_timeout(vtm_sql_con *con, unsigned long millis)
+{
+	if (sqlite3_busy_timeout(VTM_SQLITE_CON(con), millis) != SQLITE_OK)
 		return VTM_ERROR;
 	return VTM_OK;
 }
@@ -95,7 +104,7 @@ static int vtm_sqlite_commit(vtm_sql_con *con)
 
 	if (!auto_commit_enabled)
 		return vtm_sql_execute(con, "BEGIN");
-	
+
 	return VTM_OK;
 }
 
@@ -111,7 +120,7 @@ static int vtm_sqlite_rollback(vtm_sql_con *con)
 
 	if (!auto_commit_enabled)
 		return vtm_sql_execute(con, "BEGIN");
-	
+
 	return VTM_OK;
 }
 
@@ -145,7 +154,7 @@ static int vtm_sqlite_query(vtm_sql_con *con, const char *query, struct vtm_sql_
 		vtm_err_oom();
 		return vtm_err_get_code();
 	}
-	
+
 	rc = vtm_sqlite_prepare(con, query, stmt);
 	if (rc != VTM_OK)
 		return rc;
@@ -155,7 +164,7 @@ static int vtm_sqlite_query(vtm_sql_con *con, const char *query, struct vtm_sql_
 		goto end;
 
 	result->fn_release_owner = vtm_sql_stmt_free;
-	
+
 end:
 	if (rc != VTM_OK)
 		vtm_sql_stmt_free(stmt);

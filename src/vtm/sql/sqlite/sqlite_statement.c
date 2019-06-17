@@ -184,7 +184,7 @@ int vtm_sqlite_stmt_query(struct vtm_sql_stmt *stmt, struct vtm_sql_result *resu
 
 	rc = sqlite3_step(stmt_data->stmt);
 	if (rc != SQLITE_DONE && rc != SQLITE_ROW)
-		return VTM_E_SQL_UNKNOWN;
+		return vtm_sqlite_error(rc, stmt_data->con);
 	stmt_data->last_step = rc;
 
 	if (sqlite3_column_count(stmt_data->stmt) < 1)

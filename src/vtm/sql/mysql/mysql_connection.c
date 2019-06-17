@@ -30,6 +30,7 @@ struct vtm_mysql_result
 /* forward declaration */
 static int vtm_mysql_connect(vtm_sql_con *con, vtm_dataset *param);
 static int vtm_mysql_free(vtm_sql_con *con);
+static int vtm_mysql_set_lock_wait_timeout(vtm_sql_con *con, unsigned long millis);
 static int vtm_mysql_set_auto_commit(vtm_sql_con *con, bool commit);
 static int vtm_mysql_commit(vtm_sql_con *con);
 static int vtm_mysql_rollback(vtm_sql_con *con);
@@ -59,6 +60,7 @@ vtm_sql_con* vtm_mysql_con_new(vtm_dataset *param)
 		return NULL;
 	}
 
+	result->fn_set_lock_wait_timeout = vtm_mysql_set_lock_wait_timeout;
 	result->fn_set_auto_commit = vtm_mysql_set_auto_commit;
 	result->fn_commit = vtm_mysql_commit;
 	result->fn_rollback = vtm_mysql_rollback;
@@ -98,6 +100,11 @@ static int vtm_mysql_connect(vtm_sql_con *con, vtm_dataset *param)
 	con->con_data = my;
 
 	return VTM_OK;
+}
+
+static int vtm_mysql_set_lock_wait_timeout(vtm_sql_con *con, unsigned long millis)
+{
+	return VTM_E_NOT_SUPPORTED;
 }
 
 static int vtm_mysql_set_auto_commit(vtm_sql_con *con, bool commit)

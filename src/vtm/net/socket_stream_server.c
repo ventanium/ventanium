@@ -19,6 +19,8 @@
 #include <vtm/util/spinlock.h>
 #include <vtm/util/thread.h>
 
+#define VTM_STREAM_SRV_ACCEPT_MAX_ERRORS        100
+
 #define VTM_STREAM_SRV_WORKER_GET_SOCKET()      worker_current_socket
 #define VTM_STREAM_SRV_WORKER_SET_SOCKET(SOCK)  worker_current_socket = (SOCK)
 #define VTM_STREAM_SRV_WORKER_CLEAR_SOCKET()    worker_current_socket = NULL
@@ -672,31 +674,26 @@ static int vtm_socket_stream_srv_create_relay_event(vtm_socket_stream_srv *srv, 
 
 static int vtm_socket_stream_srv_accept(vtm_socket_stream_srv *srv, vtm_dataset *wd, bool direct)
 {
-	int rc;
+	int rc, errc;
 	vtm_socket *client;
 	struct vtm_socket_stream_srv_entry *node;
 
+	errc = 0;
+
 	while (true) {
 		rc = vtm_socket_accept(srv->socket, &client);
-		if (rc != VTM_OK) {
-			switch (rc) {
-				case VTM_E_IO_AGAIN:
-					return vtm_socket_listener_rearm(srv->listener, srv->socket);
+		switch (rc) {
+			case VTM_OK:
+				errc = 0;
+				break;
 
-				case VTM_E_MAX_REACHED:
-				case VTM_E_MEMORY:
-					return VTM_OK;
+			case VTM_E_IO_AGAIN:
+				return vtm_socket_listener_rearm(srv->listener, srv->socket);
 
-				case VTM_E_INTERRUPTED:
-				case VTM_E_PERMISSION:
-				case VTM_E_IO_CANCELED:
-				case VTM_E_IO_PROTOCOL:
+			default:
+				if (++errc < VTM_STREAM_SRV_ACCEPT_MAX_ERRORS)
 					continue;
-
-				default:
-					break;
-			}
-			return VTM_E_IO_UNKNOWN;
+				return vtm_socket_listener_rearm(srv->listener, srv->socket);
 		}
 
 		if (direct) {

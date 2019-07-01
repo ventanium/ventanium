@@ -7,9 +7,9 @@
 #include <stdarg.h> /* va_start() */
 #include <vtm/core/lang.h>
 
-#define VTM_ERR_STR_BASE		"VTM-Error %d (%s) at %s:%lu"
-#define VTM_ERR_STR_EXCL_MSG	VTM_ERR_STR_BASE "\n"
-#define VTM_ERR_STR_INCL_MSG	VTM_ERR_STR_BASE ": %s\n"
+#define VTM_ERR_STR_BASE        "VTM-Error %d (%s) at %s:%lu"
+#define VTM_ERR_STR_EXCL_MSG    VTM_ERR_STR_BASE "\n"
+#define VTM_ERR_STR_INCL_MSG    VTM_ERR_STR_BASE ": %s\n"
 
 struct vtm_err
 {

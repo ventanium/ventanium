@@ -7,7 +7,7 @@
 #include <stdlib.h> /* malloc(), realloc() */
 #include <vtm/core/error.h>
 
-#define VTM_FILE_BUF_SIZE	256
+#define VTM_FILE_BUF_SIZE    256
 
 uint64_t vtm_file_get_fsize(FILE *fp)
 {

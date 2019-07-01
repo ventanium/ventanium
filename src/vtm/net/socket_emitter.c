@@ -8,7 +8,7 @@
 #include <vtm/core/error.h>
 #include <vtm/fs/file.h>
 
-#define VTM_EMT_FILE_BUF_SIZE		4096
+#define VTM_EMT_FILE_BUF_SIZE       4096
 
 struct vtm_emt_raw
 {

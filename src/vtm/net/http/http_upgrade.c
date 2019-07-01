@@ -10,9 +10,9 @@
 #include <vtm/crypto/hash.h>
 #include <vtm/util/base64.h>
 
-#define VTM_HTTP_WS_VERSION 		"13"
-#define VTM_HTTP_WS_GUID 			"258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
-#define VTM_HTTP_WS_MAX_KEY_LEN		128
+#define VTM_HTTP_WS_VERSION         "13"
+#define VTM_HTTP_WS_GUID            "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+#define VTM_HTTP_WS_MAX_KEY_LEN     128
 
 bool vtm_http_is_ws_request(struct vtm_http_req *req)
 {

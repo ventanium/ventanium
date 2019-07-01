@@ -28,10 +28,10 @@ enum vtm_url_scheme
 
 struct vtm_url
 {
-	enum vtm_url_scheme	scheme;   /**< the scheme */
-	char 				*host;    /**< host part */
-	char 				*path;    /**< path part, maybe NULL */
-	unsigned int 		port;     /**< port, maybe set to default scheme port */
+	enum vtm_url_scheme scheme;   /**< the scheme */
+	char                *host;    /**< host part */
+	char                *path;    /**< path part, maybe NULL */
+	unsigned int        port;     /**< port, maybe set to default scheme port */
 };
 
 /**

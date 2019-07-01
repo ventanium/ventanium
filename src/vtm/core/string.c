@@ -14,16 +14,16 @@
 
 /* vtm_strdup() */
 #ifdef VTM_HAVE_POSIX
-#define vtm_strdup		strdup
+#define vtm_strdup      strdup
 #else
-#define vtm_strdup		vtm_strdup_self
+#define vtm_strdup      vtm_strdup_self
 #endif
 
 /* vtm_strtok_r() */
 #ifdef VTM_HAVE_POSIX
-#define vtm_strtok_r	strtok_r
+#define vtm_strtok_r    strtok_r
 #else
-#define vtm_strtok_r	vtm_strtok_r_self
+#define vtm_strtok_r    vtm_strtok_r_self
 #endif
 
 #ifndef VTM_HAVE_POSIX

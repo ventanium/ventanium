@@ -145,8 +145,12 @@ static int vtm_socket_plain_accept(struct vtm_socket *sock, struct vtm_socket **
 	length = sizeof(client_addr);
 
 	sockfd = accept(sock->fd, (struct sockaddr*) &client_addr, &length);
-	if (VTM_SOCK_INVALID(sockfd))
-		return vtm_socket_util_read_error(sock);
+	if (VTM_SOCK_INVALID(sockfd)) {
+		rc = vtm_socket_util_error(NULL);
+		if (rc == VTM_E_IO_AGAIN)
+			vtm_socket_set_state_intl(sock, VTM_SOCK_STAT_READ_AGAIN);
+		return rc;
+	}
 
 #if defined(VTM_SYS_BSD) || defined(VTM_SYS_DARWIN)
 	/* on BSD sockets inherit nonblocking state */

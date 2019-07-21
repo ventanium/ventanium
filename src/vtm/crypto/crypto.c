@@ -88,6 +88,8 @@ static void vtm_module_crypto_end_mt_callbacks(void)
 
 	for (i=0; i < num_locks; i++)
 		vtm_mutex_free(locks[i]);
+
+	free(locks);
 }
 
 #endif /* OPENSSL_VERSION_NUMBER < 0x10100000L */

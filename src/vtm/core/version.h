@@ -11,6 +11,8 @@
 #ifndef VTM_CORE_VERSION_H_
 #define VTM_CORE_VERSION_H_
 
+#include <vtm/core/macros.h>
+
 #define VTM_VERSION_MAJOR       0
 #define VTM_VERSION_MINOR       1
 #define VTM_VERSION_PATCH       0

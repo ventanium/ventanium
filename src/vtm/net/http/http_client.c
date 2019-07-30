@@ -237,6 +237,11 @@ static int vtm_http_client_send(vtm_http_client *cl, struct vtm_http_client_req 
 {
 	const char *method;
 	const char *version;
+	char buf[VTM_FMT_CHARS_INT64+1];
+
+	/* check arguments */
+	if (req->body && req->body_len > UINT64_MAX)
+		return vtm_err_set(VTM_E_INVALID_ARG);
 
 	/* send headers */
 	method = VTM_HTTP_METHODS[req->method];
@@ -275,6 +280,18 @@ static int vtm_http_client_send(vtm_http_client *cl, struct vtm_http_client_req 
 		vtm_list_free(entries);
 	}
 
+	/* content length header required? */
+	if (req->body && req->body_len > 0 && (!req->headers ||
+		(!vtm_dataset_contains(req->headers, VTM_HTTP_HEADER_CONTENT_LENGTH) &&
+		 !vtm_dataset_contains(req->headers, VTM_HTTP_HEADER_TRANSFER_ENCODING)))) {
+		buf[vtm_fmt_uint64(buf, (uint64_t) req->body_len)] = '\0';
+		vtm_socket_writer_puts(&cl->writer, VTM_HTTP_HEADER_CONTENT_LENGTH);
+		vtm_socket_writer_puts(&cl->writer, ": ");
+		vtm_socket_writer_puts(&cl->writer, buf);
+		vtm_socket_writer_puts(&cl->writer, "\r\n");
+	}
+
+	/* end headers */
 	vtm_socket_writer_puts(&cl->writer, "\r\n");
 
 	/* send body */

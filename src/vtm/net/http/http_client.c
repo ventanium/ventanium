@@ -65,9 +65,8 @@ void vtm_http_client_free(vtm_http_client *cl)
 
 	vtm_buf_release(&cl->recvbuf);
 	vtm_http_parser_release(&cl->parser);
-	vtm_socket_free(cl->sock);
+	vtm_http_client_con_close(cl);
 
-	free(cl->con_host);
 	free(cl);
 }
 
@@ -223,6 +222,7 @@ static bool vtm_http_client_con_must_close(vtm_http_client *cl, struct vtm_http_
 static void vtm_http_client_con_close(vtm_http_client *cl)
 {
 	if (cl->sock) {
+		vtm_socket_shutdown(cl->sock, VTM_SOCK_SHUT_RD | VTM_SOCK_SHUT_WR);
 		vtm_socket_close(cl->sock);
 		vtm_socket_free(cl->sock);
 		cl->sock = NULL;

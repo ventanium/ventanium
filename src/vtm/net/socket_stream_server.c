@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Matthias Benkendorf
+ * Copyright (C) 2018-2020 Matthias Benkendorf
  */
 
 #include "socket_stream_server.h"
@@ -839,14 +839,20 @@ finish:
 static VTM_INLINE void vtm_socket_stream_srv_worker_event(vtm_socket_stream_srv *srv, vtm_dataset *wd, struct vtm_socket_stream_srv_entry *event)
 {
 	bool processed;
+	vtm_socket *sock;
 
-	VTM_STREAM_SRV_WORKER_SET_SOCKET(event->sock);
+	sock = event->sock;
+
+	VTM_STREAM_SRV_WORKER_SET_SOCKET(sock);
 	processed = vtm_socket_stream_srv_sock_event(srv, wd, event);
 	VTM_STREAM_SRV_WORKER_CLEAR_SOCKET();
 
-	vtm_socket_unref(event->sock);
 	if (processed)
 		free(event);
+	else
+		vtm_socket_stream_srv_add_event(srv, event);
+
+	vtm_socket_unref(sock);
 }
 
 static VTM_INLINE bool vtm_socket_stream_srv_sock_event(vtm_socket_stream_srv *srv, vtm_dataset *wd, struct vtm_socket_stream_srv_entry *event)
@@ -864,10 +870,8 @@ static VTM_INLINE bool vtm_socket_stream_srv_sock_event(vtm_socket_stream_srv *s
 		case VTM_SOCK_SRV_CLOSED:
 			rc = vtm_socket_stream_srv_sock_trylock(event->sock,
 				VTM_SOCK_STAT_READ_LOCKED | VTM_SOCK_STAT_WRITE_LOCKED);
-			if (rc != VTM_OK) {
-				vtm_socket_stream_srv_add_event(srv, event);
+			if (rc != VTM_OK)
 				return false;
-			}
 			vtm_socket_stream_srv_sock_closed(srv, wd, event->sock);
 			vtm_socket_stream_srv_sock_unlock(event->sock,
 				VTM_SOCK_STAT_READ_LOCKED | VTM_SOCK_STAT_WRITE_LOCKED);
@@ -876,10 +880,8 @@ static VTM_INLINE bool vtm_socket_stream_srv_sock_event(vtm_socket_stream_srv *s
 		case VTM_SOCK_SRV_ERROR:
 			rc = vtm_socket_stream_srv_sock_trylock(event->sock,
 				VTM_SOCK_STAT_READ_LOCKED | VTM_SOCK_STAT_WRITE_LOCKED);
-			if (rc != VTM_OK) {
-				vtm_socket_stream_srv_add_event(srv, event);
+			if (rc != VTM_OK)
 				return false;
-			}
 			vtm_socket_stream_srv_sock_error(srv, wd, event->sock);
 			vtm_socket_stream_srv_sock_unlock(event->sock,
 				VTM_SOCK_STAT_READ_LOCKED | VTM_SOCK_STAT_WRITE_LOCKED);

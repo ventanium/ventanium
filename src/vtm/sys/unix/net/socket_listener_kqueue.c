@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Matthias Benkendorf
+ * Copyright (C) 2018-2020 Matthias Benkendorf
  */
 
 #include <vtm/net/socket_listener.h>
@@ -8,6 +8,7 @@
 #include <string.h> /* memset() */
 #include <unistd.h> /* close(), pipe() */
 #include <fcntl.h> /* O_NONBLOCK */
+#include <errno.h>
 
 #include <sys/types.h>
 #include <sys/event.h>
@@ -164,6 +165,15 @@ int vtm_socket_listener_run(vtm_socket_listener *li, struct vtm_socket_event **e
 
 	off = 0;
 	n = kevent(li->kq, NULL, 0, li->events, li->num_events, NULL);
+	if (n < 0) {
+		if (errno == EINTR) {
+			n = 0;
+		}
+		else {
+			return VTM_ERROR;
+		}
+	}
+
 	for (i=0; i < n; i++) {
 		/* li->cfd has data to read, listener was interrupted */
 		if (li->events[i].udata == li) {
@@ -191,7 +201,7 @@ int vtm_socket_listener_run(vtm_socket_listener *li, struct vtm_socket_event **e
 	}
 
 	*events = li->sock_events;
-	*num_events = n > 0 ? n - off : 0;
+	*num_events = n - off;
 
 	return VTM_OK;
 }

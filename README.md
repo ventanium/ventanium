@@ -434,7 +434,7 @@ Ventanium is released under the 2-Clause BSD License,
 see [LICENSE](LICENSE).
 
 ## Author
-(C) 2018-2019 Matthias Benkendorf
+(C) 2018-2020 Matthias Benkendorf
 
 ## Contact
 

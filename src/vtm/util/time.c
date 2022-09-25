@@ -25,7 +25,7 @@ int vtm_date_now_utc(struct vtm_date *date)
 
 	date->year = 1900 + now->tm_year;
 	date->month = now->tm_mon;
-	date->day_of_week = now->tm_wday == 0 ? 7 : now->tm_wday - 1;
+	date->day_of_week = now->tm_wday == 0 ? 6 : now->tm_wday - 1;
 	date->day_of_month = now->tm_mday;
 	date->day_of_year = now->tm_yday;
 

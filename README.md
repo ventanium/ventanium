@@ -264,7 +264,6 @@ install the OpenSSL development headers:
 
 ```
 apt-get install libssl-dev
-
 ```
 
 Otherwise you have to disable OpenSSL support with `NO_OPENSSL=1`.
@@ -276,7 +275,6 @@ the MySQL C connector
 
 ```
 apt-get install libmysqlclient-dev
-
 ```
 
 or the MariaDB C connector as drop-in replacement
@@ -295,7 +293,6 @@ For file based databases please install the SQLite3 development headers:
 
 ```
 apt-get install libsqlite3-dev
-
 ```
 
 ### Building

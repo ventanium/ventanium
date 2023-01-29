@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Matthias Benkendorf
+ * Copyright (C) 2018-2023 Matthias Benkendorf
  */
 
 /**
@@ -53,6 +53,32 @@ VTM_API int vtm_nm_stream_con_send(vtm_nm_stream_con *con, vtm_dataset *msg);
  * @param con the connection that should be closed
  */
 VTM_API void vtm_nm_stream_con_close(vtm_nm_stream_con *con);
+
+/**
+ * Sets option on underlying socket
+ *
+ * @param con the connection
+ * @param opt the option that should be set
+ * @param val the value that should be set
+ * @param len length of the value in bytes
+ * @return VTM_OK if the option was successfully set
+ * @return VTM_E_NOT_SUPPORTED if the option is not supported
+ * @return VTM_E_IO_UNKNOWN or VTM_ERROR if an error occured
+ */
+VTM_API int vtm_nm_stream_con_set_opt(vtm_nm_stream_con *con, int opt, const void *val, size_t len);
+
+/**
+ * Retrieves current option value from underlying socket
+ *
+ * @param con the connection
+ * @param opt the option that should be read
+ * @param[out] val the current value of the option
+ * @param len length of value in bytes
+ * @return VTM_OK if the option was successfully read
+ * @return VTM_E_NOT_SUPPORTED if the option is not supported
+ * @return VTM_E_IO_UNKNOWN or VTM_ERROR if an error occured
+ */
+VTM_API int vtm_nm_stream_con_get_opt(vtm_nm_stream_con *con, int opt, void *val, size_t len);
 
 #ifdef __cplusplus
 }

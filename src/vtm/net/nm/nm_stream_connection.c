@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Matthias Benkendorf
+ * Copyright (C) 2018-2023 Matthias Benkendorf
  */
 
 #include "nm_stream_connection_intl.h"
@@ -79,6 +79,16 @@ int vtm_nm_stream_con_send(vtm_nm_stream_con *con, vtm_dataset *msg)
 void vtm_nm_stream_con_close(vtm_nm_stream_con *con)
 {
 	vtm_socket_con_close(&con->sock_con);
+}
+
+int vtm_nm_stream_con_set_opt(vtm_nm_stream_con *con, int opt, const void *val, size_t len)
+{
+	return vtm_socket_set_opt(con->sock_con.sock, opt, val, len);
+}
+
+int vtm_nm_stream_con_get_opt(vtm_nm_stream_con *con, int opt, void *val, size_t len)
+{
+	return vtm_socket_get_opt(con->sock_con.sock, opt, val, len);
 }
 
 enum vtm_net_recv_stat vtm_nm_stream_con_read(vtm_nm_stream_con *con)

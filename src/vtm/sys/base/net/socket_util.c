@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Matthias Benkendorf
+ * Copyright (C) 2018-2023 Matthias Benkendorf
  */
 
 #include "socket_util_intl.h"
@@ -67,6 +67,10 @@ static VTM_THREAD_LOCAL int vtm_sig_blocked = 0;
 /* forward declaration */
 static int vtm_socket_util_bind_ip4(struct vtm_socket *sock, int sockfam, int addr_type, const char *addr, unsigned int port);
 static int vtm_socket_util_bind_ip6(struct vtm_socket *sock, int sockfam, int addr_type, const char *addr, unsigned int port);
+static int vtm_socket_util_set_keepalive(struct vtm_socket *sock, bool enabled);
+static int vtm_socket_util_set_tcp_keepalive_idle(struct vtm_socket *sock, int seconds);
+static int vtm_socket_util_set_tcp_keepalive_intvl(struct vtm_socket *sock, int seconds);
+static int vtm_socket_util_set_tcp_keepalive_probes(struct vtm_socket *sock, int count);
 static int vtm_socket_util_set_tcp_nodelay(struct vtm_socket *sock, bool enabled);
 static int vtm_socket_util_get_tcp_nodelay(struct vtm_socket *sock, bool *enabled);
 static int vtm_socket_util_set_send_timeout(struct vtm_socket *sock, unsigned long millis);
@@ -294,10 +298,30 @@ int vtm_socket_util_get_remote_addr(struct vtm_socket *sock, struct vtm_socket_s
 int vtm_socket_util_set_opt(struct vtm_socket *sock, int opt, const void *val, size_t len)
 {
 	switch (opt) {
+		case VTM_SOCK_OPT_KEEPALIVE:
+			if (len != sizeof(bool))
+				return VTM_E_INVALID_ARG;
+			return vtm_socket_util_set_keepalive(sock, *((bool*)val));
+
 		case VTM_SOCK_OPT_NONBLOCKING:
 			if (len != sizeof(bool))
 				return VTM_E_INVALID_ARG;
 			return vtm_socket_util_set_nonblocking(sock->fd, *((bool*)val));
+
+		case VTM_SOCK_OPT_TCP_KEEPALIVE_IDLE:
+			if (len != sizeof(int))
+				return VTM_E_INVALID_ARG;
+			return vtm_socket_util_set_tcp_keepalive_idle(sock, *((int*)val));
+
+		case VTM_SOCK_OPT_TCP_KEEPALIVE_INTVL:
+			if (len != sizeof(int))
+				return VTM_E_INVALID_ARG;
+			return vtm_socket_util_set_tcp_keepalive_intvl(sock, *((int*)val));
+
+		case VTM_SOCK_OPT_TCP_KEEPALIVE_PROBES:
+			if (len != sizeof(int))
+				return VTM_E_INVALID_ARG;
+			return vtm_socket_util_set_tcp_keepalive_probes(sock, *((int*)val));
 
 		case VTM_SOCK_OPT_TCP_NODELAY:
 			if (len != sizeof(bool))
@@ -539,3 +563,49 @@ int vtm_socket_util_set_nonblocking(vtm_sys_socket_t fd, bool enabled)
 }
 
 #endif
+
+int vtm_socket_util_set_keepalive(struct vtm_socket *sock, bool enabled)
+{
+	int rc, opt;
+
+	opt = enabled ? 1 : 0;
+
+	rc = setsockopt(sock->fd, SOL_SOCKET, SO_KEEPALIVE, VTM_SETSOCKOPT_CAST &opt, sizeof(opt));
+	if (rc != 0)
+		return vtm_socket_util_error(sock);
+
+	return VTM_OK;
+}
+
+int vtm_socket_util_set_tcp_keepalive_idle(struct vtm_socket *sock, int seconds)
+{
+	int rc;
+
+	rc = setsockopt(sock->fd, IPPROTO_TCP, TCP_KEEPIDLE, VTM_SETSOCKOPT_CAST &seconds, sizeof(int));
+	if (rc != 0)
+		return vtm_socket_util_error(sock);
+
+	return VTM_OK;
+}
+
+int vtm_socket_util_set_tcp_keepalive_intvl(struct vtm_socket *sock, int seconds)
+{
+	int rc;
+
+	rc = setsockopt(sock->fd, IPPROTO_TCP, TCP_KEEPINTVL, VTM_SETSOCKOPT_CAST &seconds, sizeof(int));
+	if (rc != 0)
+		return vtm_socket_util_error(sock);
+
+	return VTM_OK;
+}
+
+int vtm_socket_util_set_tcp_keepalive_probes(struct vtm_socket *sock, int count)
+{
+	int rc;
+
+	rc = setsockopt(sock->fd, IPPROTO_TCP, TCP_KEEPCNT, VTM_SETSOCKOPT_CAST &count, sizeof(int));
+	if (rc != 0)
+		return vtm_socket_util_error(sock);
+
+	return VTM_OK;
+}

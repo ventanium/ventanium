@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Matthias Benkendorf
+ * Copyright (C) 2018-2023 Matthias Benkendorf
  */
 
 /**
@@ -39,14 +39,18 @@ extern "C" {
 #define VTM_SOCK_STAT_NBL_AUTO                    (1 << 13)  /**< Non-blocking read or write, automatically switched */
 
 /* shutdown */
-#define VTM_SOCK_SHUT_RD                1  /**< Shutdown read-side */
-#define VTM_SOCK_SHUT_WR                2  /**< Shutdown write-side */
+#define VTM_SOCK_SHUT_RD                   1  /**< Shutdown read-side */
+#define VTM_SOCK_SHUT_WR                   2  /**< Shutdown write-side */
 
 /* options */
-#define VTM_SOCK_OPT_NONBLOCKING        1  /**< expects bool */
-#define VTM_SOCK_OPT_TCP_NODELAY        2  /**< expects bool */
-#define VTM_SOCK_OPT_RECV_TIMEOUT       3  /**< expects unsigned long, values is milliseconds */
-#define VTM_SOCK_OPT_SEND_TIMEOUT       4  /**< expects unsigned long, values is milliseconds */
+#define VTM_SOCK_OPT_KEEPALIVE             1  /**< expects bool */
+#define VTM_SOCK_OPT_NONBLOCKING           2  /**< expects bool */
+#define VTM_SOCK_OPT_RECV_TIMEOUT          3  /**< expects unsigned long, value is milliseconds */
+#define VTM_SOCK_OPT_SEND_TIMEOUT          4  /**< expects unsigned long, value is milliseconds */
+#define VTM_SOCK_OPT_TCP_KEEPALIVE_IDLE    5  /**< expects int, value is seconds */
+#define VTM_SOCK_OPT_TCP_KEEPALIVE_INTVL   6  /**< expects int, value is seconds */
+#define VTM_SOCK_OPT_TCP_KEEPALIVE_PROBES  7  /**< expects int, value is count */
+#define VTM_SOCK_OPT_TCP_NODELAY           8  /**< expects bool */
 
 /* default TLS ciphers */
 #define VTM_SOCKET_TLS_DEFAULT_CIPHERS                              \

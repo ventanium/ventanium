@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Matthias Benkendorf
+ * Copyright (C) 2018-2023 Matthias Benkendorf
  */
 
 #include <vtf.h>
@@ -9,6 +9,7 @@
 #include <vtm/crypto/crypto.h>
 #include <vtm/net/nm/nm_stream_client.h>
 #include <vtm/net/nm/nm_stream_server.h>
+#include <vtm/net/socket.h>
 #include <vtm/util/latch.h>
 #include <vtm/util/thread.h>
 
@@ -40,6 +41,29 @@ static void end_modules(void)
 static void server_ready(vtm_nm_stream_srv *srv, struct vtm_nm_stream_srv_opts *opts)
 {
 	vtm_latch_count(&latch);
+}
+
+static void client_connect(vtm_nm_stream_srv *srv, vtm_dataset *wd, vtm_nm_stream_con *con)
+{
+	int rc, idle, intvl, probes;
+	bool keepalive;
+
+	keepalive = true;
+	idle = 120;
+	intvl = 60;
+	probes = 3;
+
+	rc = vtm_nm_stream_con_set_opt(con, VTM_SOCK_OPT_KEEPALIVE, &keepalive, sizeof(bool));
+	VTM_TEST_ASSERT(rc == VTM_OK, "enable keepalive");
+
+	rc = vtm_nm_stream_con_set_opt(con, VTM_SOCK_OPT_TCP_KEEPALIVE_IDLE, &idle, sizeof(int));
+	VTM_TEST_ASSERT(rc == VTM_OK, "keepalive idle");
+
+	rc = vtm_nm_stream_con_set_opt(con, VTM_SOCK_OPT_TCP_KEEPALIVE_INTVL, &intvl, sizeof(int));
+	VTM_TEST_ASSERT(rc == VTM_OK, "keepalive interval");
+
+	rc = vtm_nm_stream_con_set_opt(con, VTM_SOCK_OPT_TCP_KEEPALIVE_PROBES, &probes, sizeof(int));
+	VTM_TEST_ASSERT(rc == VTM_OK, "keepalive probes");
 }
 
 static void client_msg(vtm_nm_stream_srv *srv, vtm_dataset *wd, vtm_nm_stream_con *con, vtm_dataset *msg)
@@ -145,6 +169,7 @@ static void test_stream_server(void)
 	opts.tls.enabled = false;
 	opts.threads = 0;
 	opts.cbs.server_ready = server_ready;
+	opts.cbs.client_connect = client_connect;
 	opts.cbs.client_msg = client_msg;
 
 	/* test plain single-threaded */
